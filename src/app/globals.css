@@ -5,54 +5,102 @@
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Stripe-inspired color palette */
+  --stripe-primary: #635BFF;
+  --stripe-primary-dark: #32325d;
+  --stripe-secondary: #525f7f;
+  --stripe-background: #f6f9fc;
+  --stripe-surface: #ffffff;
+  --stripe-border: #e6ebf1;
+  --stripe-text-primary: #32325d;
+  --stripe-text-secondary: #525f7f;
+  --stripe-text-muted: #8892a0;
 
-  /* Design System Colors */
-  --color-primary: #3b82f6;
-  --color-primary-focus: #2563eb;
+  /* Legacy support */
+  --background: var(--stripe-surface);
+  --foreground: var(--stripe-text-primary);
+  --color-primary: var(--stripe-primary);
+  --color-primary-focus: #4c46c8;
   --color-primary-content: #ffffff;
-
-  --color-secondary: #64748b;
-  --color-secondary-focus: #475569;
+  --color-secondary: var(--stripe-secondary);
+  --color-secondary-focus: #3d4a5f;
   --color-secondary-content: #ffffff;
-
-  --color-accent: #f59e0b;
-  --color-accent-focus: #d97706;
+  --color-accent: var(--stripe-primary);
+  --color-accent-focus: #4c46c8;
   --color-accent-content: #ffffff;
-
-  --color-neutral: #6b7280;
-  --color-neutral-focus: #4b5563;
+  --color-neutral: var(--stripe-text-secondary);
+  --color-neutral-focus: var(--stripe-text-primary);
   --color-neutral-content: #ffffff;
-
-  --color-base-100: #ffffff;
-  --color-base-200: #f8fafc;
-  --color-base-300: #e2e8f0;
-
+  --color-base-100: var(--stripe-surface);
+  --color-base-200: var(--stripe-background);
+  --color-base-300: var(--stripe-border);
   --color-success: #10b981;
   --color-warning: #f59e0b;
   --color-error: #ef4444;
-  --color-info: #3b82f6;
+  --color-info: var(--stripe-primary);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: var(--stripe-surface);
+    --foreground: var(--stripe-text-primary);
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Typography scale */
+h1,
+.h1 {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+h2,
+.h2 {
+  font-size: 2rem;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h3,
+.h3 {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+h4,
+.h4 {
+  font-size: 1.25rem;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+p,
+.text-body {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.text-small {
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 /* Focus styles for accessibility */
@@ -62,74 +110,91 @@ body {
 .select:focus,
 .file-input:focus {
   outline: none !important;
-  box-shadow: 0 0 0 2px var(--color-primary) !important;
+  box-shadow: 0 0 0 2px var(--stripe-primary) !important;
 }
 
-/* Consistent border radius */
+/* Consistent border radius - Stripe style */
 .card,
 .modal-box {
-  border-radius: 1rem !important;
+  border-radius: 0.5rem !important;
 }
 
 .btn {
-  border-radius: 0.5rem !important;
+  border-radius: 0.375rem !important;
+  font-weight: 500 !important;
+  transition: all 0.15s ease-in-out !important;
+}
+
+.btn-primary {
+  background-color: var(--stripe-primary) !important;
+  border-color: var(--stripe-primary) !important;
+  color: white !important;
+}
+
+.btn-primary:hover {
+  background-color: #4c46c8 !important;
+  border-color: #4c46c8 !important;
+}
+
+.btn-primary:focus {
+  box-shadow: 0 0 0 2px var(--stripe-primary) !important;
 }
 
 .input,
 .textarea,
 .select,
 .file-input {
-  border-radius: 0.5rem !important;
-}
-
-/* Form spacing */
-.form-control {
-  margin-bottom: 1rem;
-}
-
-.form-control .label {
-  margin-bottom: 0.5rem;
-}
-
-/* Badge padding */
-.badge {
-  padding: 0.5rem 1rem !important;
-}
-
-/* Button border styling */
-.btn {
-  border-width: 1px !important;
-}
-
-.btn-outline {
-  border-width: 1px !important;
-}
-
-/* Card border styling */
-.card {
-  border: 1px solid var(--color-primary) !important;
-}
-
-/* Input field border styling */
-.input,
-.textarea,
-.select,
-.file-input {
-  border: 1px solid var(--color-primary) !important;
+  border-radius: 0.375rem !important;
+  border: 1px solid var(--stripe-border) !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  transition: all 0.15s ease-in-out !important;
 }
 
 .input:focus,
 .textarea:focus,
 .select:focus,
 .file-input:focus {
-  border-color: var(--color-primary-focus) !important;
-  box-shadow: 0 0 0 2px var(--color-primary) !important;
+  border-color: var(--stripe-primary) !important;
+  box-shadow: 0 0 0 2px rgba(99, 91, 255, 0.1) !important;
+}
+
+/* Form spacing */
+.form-control {
+  margin-bottom: 1.5rem;
+}
+
+.form-control .label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--stripe-text-primary);
+}
+
+/* Badge padding */
+.badge {
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.375rem !important;
+  font-weight: 500 !important;
+}
+
+/* Card styling */
+.card {
+  background: var(--stripe-surface) !important;
+  border: 1px solid var(--stripe-border) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+  transition: box-shadow 0.15s ease-in-out !important;
+}
+
+.card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
 }
 
 /* Modal improvements */
 .modal-box {
   max-width: 32rem;
   width: 90vw;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
 }
 
 @media (max-width: 640px) {
@@ -137,4 +202,42 @@ body {
     width: 95vw;
     margin: 1rem;
   }
+}
+
+/* Radio and Checkbox styling */
+input[type="radio"],
+input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--stripe-border);
+  border-radius: 0.25rem;
+  transition: all 0.15s ease-in-out;
+}
+
+input[type="radio"]:checked,
+input[type="checkbox"]:checked {
+  background-color: var(--stripe-primary);
+  border-color: var(--stripe-primary);
+}
+
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+  box-shadow: 0 0 0 2px rgba(99, 91, 255, 0.1);
+}
+
+/* Spacing utilities */
+.space-y-8>*+* {
+  margin-top: 2rem;
+}
+
+.space-y-6>*+* {
+  margin-top: 1.5rem;
+}
+
+.space-y-4>*+* {
+  margin-top: 1rem;
+}
+
+.space-y-2>*+* {
+  margin-top: 0.5rem;
 }

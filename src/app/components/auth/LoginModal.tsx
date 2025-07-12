@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import React, { useState, useEffect } from 'react';
+import { signInWithEmailAndPassword, setPersistence, browserSessionPersistence, browserLocalPersistence } from 'firebase/auth';
 import { auth } from '../../../lib/firebase';
 import { useToast } from '../../../lib/toast-context';
 
@@ -18,11 +18,39 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
     const [rememberMe, setRememberMe] = useState(false);
     const { addToast } = useToast();
 
+    // Load saved credentials when component mounts
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('rememberedEmail');
+        const savedPassword = localStorage.getItem('rememberedPassword');
+        const savedRememberMe = localStorage.getItem('rememberMe') === 'true';
+
+        if (savedEmail && savedPassword && savedRememberMe) {
+            setEmail(savedEmail);
+            setPassword(savedPassword);
+            setRememberMe(true);
+        }
+    }, []);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
 
         try {
+            // Set persistence based on "Remember me" checkbox
+            if (rememberMe) {
+                await setPersistence(auth, browserLocalPersistence);
+                // Save credentials to localStorage
+                localStorage.setItem('rememberedEmail', email);
+                localStorage.setItem('rememberedPassword', password);
+                localStorage.setItem('rememberMe', 'true');
+            } else {
+                await setPersistence(auth, browserSessionPersistence);
+                // Clear saved credentials
+                localStorage.removeItem('rememberedEmail');
+                localStorage.removeItem('rememberedPassword');
+                localStorage.removeItem('rememberMe');
+            }
+
             await signInWithEmailAndPassword(auth, email, password);
             addToast('success', 'Successfully logged in!');
             onClose();
@@ -33,6 +61,17 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
             addToast('error', error.message);
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Handle remember me checkbox change
+    const handleRememberMeChange = (checked: boolean) => {
+        setRememberMe(checked);
+        if (!checked) {
+            // Clear saved credentials when unchecking
+            localStorage.removeItem('rememberedEmail');
+            localStorage.removeItem('rememberedPassword');
+            localStorage.removeItem('rememberMe');
         }
     };
 
@@ -87,9 +126,9 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
                         <label className="label cursor-pointer justify-start gap-3">
                             <input
                                 type="checkbox"
-                                className="checkbox checkbox-sm checkbox-primary focus:outline-none"
+                                className="checkbox checkbox-sm checkbox-primary border-2 border-gray-400 focus:outline-none"
                                 checked={rememberMe}
-                                onChange={(e) => setRememberMe(e.target.checked)}
+                                onChange={(e) => handleRememberMeChange(e.target.checked)}
                             />
                             <span className="label-text text-foreground">Remember me</span>
                         </label>

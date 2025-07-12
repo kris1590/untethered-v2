@@ -5,6 +5,7 @@ import { useAuth } from '../../lib/auth-context';
 import { useToast } from '../../lib/toast-context';
 import LoginModal from './auth/LoginModal';
 import SignUpModal from './auth/SignUpModal';
+import { useRouter } from 'next/navigation';
 
 const navLinks = [
     { href: '/team-culture', label: 'Team Culture' },
@@ -17,6 +18,7 @@ const navLinks = [
 export default function Header() {
     const { user, userData, logout } = useAuth();
     const { addToast } = useToast();
+    const router = useRouter();
     const [menuOpen, setMenuOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
@@ -25,6 +27,7 @@ export default function Header() {
         try {
             await logout();
             addToast('success', 'Successfully logged out!');
+            router.push('/');
         } catch (error) {
             addToast('error', 'Failed to logout. Please try again.');
         }

@@ -9,6 +9,7 @@ import { db } from '@/lib/firebase';
 import { collection, addDoc, getDocs, Timestamp, deleteDoc, doc } from 'firebase/firestore';
 import { useAuth } from '@/lib/auth-context';
 import { useToast } from '@/lib/toast-context';
+import ProtectedRoute from '../components/ProtectedRoute';
 // FullCalendar CSS will be loaded automatically by the components
 
 // Custom CSS to make all calendar content black and buttons consistent
@@ -232,9 +233,7 @@ export default function FullCalendarPage() {
             return;
         }
 
-        if (!confirm('Are you sure you want to delete this event?')) {
-            return;
-        }
+
 
         try {
             // Delete from Firestore
@@ -286,196 +285,198 @@ export default function FullCalendarPage() {
     }
 
     return (
-        <div className="bg-base-200 min-h-screen py-6">
-            <style dangerouslySetInnerHTML={{ __html: calendarStyles }} />
-            <div className="max-w-4xl mx-auto px-2 sm:px-6">
-                <div className="card bg-base-100 shadow-md rounded-xl">
-                    <div className="card-body px-1 py-4 sm:p-8">
-                        <h1 className="text-2xl font-semibold text-foreground mb-4 text-center">
-                            Community calendar
-                        </h1>
-                        <FullCalendar
-                            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                            headerToolbar={{
-                                left: 'prev,next today',
-                                center: 'title',
-                                right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                            }}
-                            initialView="dayGridMonth"
-                            events={events}
-                            selectable={true}
-                            select={handleDateSelect}
-                            eventClick={handleEventClick}
-                            eventContent={renderEventContent}
-                            height={window.innerWidth < 600 ? 430 : 600}
-                            aspectRatio={1.5}
-                            contentHeight="auto"
-                            dayMaxEvents={3}
-                            buttonText={{
-                                today: 'Today',
-                                month: 'Month',
-                                week: 'Week',
-                                day: 'Day'
-                            }}
-                            eventDisplay="block"
-                            themeSystem="standard"
-                        />
+        <ProtectedRoute>
+            <div className="bg-base-200 min-h-screen py-6">
+                <style dangerouslySetInnerHTML={{ __html: calendarStyles }} />
+                <div className="max-w-4xl mx-auto px-2 sm:px-6">
+                    <div className="card bg-base-100 shadow-md rounded-xl">
+                        <div className="card-body px-1 py-4 sm:p-8">
+                            <h1 className="text-2xl font-semibold text-foreground mb-4 text-center">
+                                Community calendar
+                            </h1>
+                            <FullCalendar
+                                plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                                headerToolbar={{
+                                    left: 'prev,next today',
+                                    center: 'title',
+                                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                                }}
+                                initialView="dayGridMonth"
+                                events={events}
+                                selectable={true}
+                                select={handleDateSelect}
+                                eventClick={handleEventClick}
+                                eventContent={renderEventContent}
+                                height={window.innerWidth < 600 ? 430 : 600}
+                                aspectRatio={1.5}
+                                contentHeight="auto"
+                                dayMaxEvents={3}
+                                buttonText={{
+                                    today: 'Today',
+                                    month: 'Month',
+                                    week: 'Week',
+                                    day: 'Day'
+                                }}
+                                eventDisplay="block"
+                                themeSystem="standard"
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Modal for Adding Event */}
-            {modalOpen && (
-                <dialog className="modal modal-open">
-                    <div className="modal-box max-w-md bg-base-100 shadow-xl rounded-xl">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-lg font-semibold text-foreground">
-                                Book for {modalDate && new Date(modalDate).toLocaleDateString()}
-                            </h2>
-                            <button
-                                onClick={closeModal}
-                                className="btn btn-ghost btn-sm btn-circle focus:outline-none"
-                                aria-label="Close modal"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                        <form onSubmit={handleAddEvent} className="space-y-6">
-                            <div className="form-control">
-                                <span className="label-text font-medium text-foreground mb-2">Event type</span>
-                                <label className="flex gap-3 items-center cursor-pointer p-2 hover:bg-base-200 rounded">
-                                    <input
-                                        type="radio"
-                                        name="option"
-                                        value="breathwork"
-                                        className="radio focus:outline-none"
-                                        checked={option === 'breathwork'}
-                                        onChange={() => setOption('breathwork')}
-                                    />
-                                    <span className="text-foreground">Breathwork session</span>
-                                </label>
-                                <label className="flex gap-3 items-center cursor-pointer mt-3 p-2 hover:bg-base-200 rounded">
-                                    <input
-                                        type="radio"
-                                        name="option"
-                                        value="topic"
-                                        className="radio radio-primary focus:outline-none"
-                                        checked={option === 'topic'}
-                                        onChange={() => setOption('topic')}
-                                    />
-                                    <span className="text-foreground">Book topic</span>
-                                </label>
-                            </div>
-                            {option === 'topic' && (
-                                <div className="form-control">
-                                    <label>
-                                        <span className="label-text font-medium text-foreground">Topic</span>
-                                    </label>
-                                    <input
-                                        className="input input-bordered w-full text-foreground mt-2 focus:outline-none"
-                                        value={topic}
-                                        onChange={e => setTopic(e.target.value)}
-                                        placeholder="Enter your topic..."
-                                        required
-                                    />
-                                </div>
-                            )}
-                            <div className="flex flex-col gap-3 sm:flex-row sm:justify-between mt-8">
+                {/* Modal for Adding Event */}
+                {modalOpen && (
+                    <dialog className="modal modal-open">
+                        <div className="modal-box max-w-md bg-base-100 shadow-xl rounded-xl">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-lg font-semibold text-foreground">
+                                    Book for {modalDate && new Date(modalDate).toLocaleDateString()}
+                                </h2>
                                 <button
-                                    type="button"
-                                    className="btn btn-ghost w-full sm:w-auto text-foreground focus:outline-none"
                                     onClick={closeModal}
-                                    disabled={loading}
+                                    className="btn btn-ghost btn-sm btn-circle focus:outline-none"
+                                    aria-label="Close modal"
                                 >
-                                    Cancel
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="btn btn-primary w-full sm:w-auto text-white focus:outline-none"
-                                    disabled={loading || !option || (option === 'topic' && !topic)}
-                                >
-                                    {loading ? (
-                                        <>
-                                            <span className="loading loading-spinner loading-sm"></span>
-                                            Booking...
-                                        </>
-                                    ) : (
-                                        'Book event'
-                                    )}
+                                    ✕
                                 </button>
                             </div>
-                        </form>
-                    </div>
-                    <form method="dialog" className="modal-backdrop">
-                        <button onClick={closeModal} className="sr-only">close</button>
-                    </form>
-                </dialog>
-            )}
-
-            {/* Event Detail Modal */}
-            {eventDetailModal && selectedEvent && (
-                <dialog className="modal modal-open">
-                    <div className="modal-box max-w-md bg-base-100 shadow-xl rounded-xl">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-xl font-semibold text-foreground">
-                                Event details
-                            </h2>
-                            <button
-                                onClick={closeEventDetailModal}
-                                className="btn btn-ghost btn-sm btn-circle focus:outline-none"
-                                aria-label="Close modal"
-                            >
-                                ✕
-                            </button>
-                        </div>
-
-                        <div className="space-y-4">
-                            <div className="card bg-base-200 p-4">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <div className={`badge badge-lg ${selectedEvent.type === 'breathwork'
-                                        ? 'badge-primary'
-                                        : 'badge-success'
-                                        }`}>
-                                        {selectedEvent.type === 'breathwork' ? 'Breathwork' : 'Topic'}
+                            <form onSubmit={handleAddEvent} className="space-y-6">
+                                <div className="form-control">
+                                    <span className="label-text font-medium text-foreground mb-2">Event type</span>
+                                    <label className="flex gap-3 items-center cursor-pointer p-2 hover:bg-base-200 rounded">
+                                        <input
+                                            type="radio"
+                                            name="option"
+                                            value="breathwork"
+                                            className="radio focus:outline-none border-1 border-black"
+                                            checked={option === 'breathwork'}
+                                            onChange={() => setOption('breathwork')}
+                                        />
+                                        <span className="text-foreground">Breathwork session</span>
+                                    </label>
+                                    <label className="flex gap-3 items-center cursor-pointer mt-3 p-2 hover:bg-base-200 rounded">
+                                        <input
+                                            type="radio"
+                                            name="option"
+                                            value="topic"
+                                            className="radio radio-primary focus:outline-none border-1 border-black"
+                                            checked={option === 'topic'}
+                                            onChange={() => setOption('topic')}
+                                        />
+                                        <span className="text-foreground">Book topic</span>
+                                    </label>
+                                </div>
+                                {option === 'topic' && (
+                                    <div className="form-control">
+                                        <label>
+                                            <span className="label-text font-medium text-foreground">Topic</span>
+                                        </label>
+                                        <input
+                                            className="input input-bordered w-full text-foreground mt-2 focus:outline-none"
+                                            value={topic}
+                                            onChange={e => setTopic(e.target.value)}
+                                            placeholder="Enter your topic..."
+                                            required
+                                        />
                                     </div>
-                                    <span className="text-sm text-neutral">
-                                        {new Date(selectedEvent.start).toLocaleDateString()}
-                                    </span>
-                                </div>
-
-                                <h3 className="font-semibold text-foreground mb-2">
-                                    {selectedEvent.title}
-                                </h3>
-
-                                {selectedEvent.topic && (
-                                    <p className="text-neutral mb-3">
-                                        <strong>Topic:</strong> {selectedEvent.topic}
-                                    </p>
                                 )}
-
-                                <div className="text-sm text-neutral">
-                                    <p><strong>Facilitator:</strong> {selectedEvent.facilitator}</p>
-                                </div>
-                            </div>
-
-                            {(userData?.displayName || user?.email) === selectedEvent.facilitator && (
-                                <div className="flex justify-end mt-4">
+                                <div className="flex flex-col gap-3 sm:flex-row sm:justify-between mt-8">
                                     <button
-                                        onClick={() => handleDeleteEvent(selectedEvent.id!)}
-                                        className="btn btn-error btn-sm text-white focus:outline-none"
+                                        type="button"
+                                        className="btn btn-ghost w-full sm:w-auto text-foreground focus:outline-none"
+                                        onClick={closeModal}
+                                        disabled={loading}
                                     >
-                                        Delete event
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary w-full sm:w-auto text-white focus:outline-none"
+                                        disabled={loading || !option || (option === 'topic' && !topic)}
+                                    >
+                                        {loading ? (
+                                            <>
+                                                <span className="loading loading-spinner loading-sm"></span>
+                                                Booking...
+                                            </>
+                                        ) : (
+                                            'Book event'
+                                        )}
                                     </button>
                                 </div>
-                            )}
+                            </form>
                         </div>
-                    </div>
-                    <form method="dialog" className="modal-backdrop">
-                        <button onClick={closeEventDetailModal} className="sr-only">close</button>
-                    </form>
-                </dialog>
-            )}
-        </div>
+                        <form method="dialog" className="modal-backdrop">
+                            <button onClick={closeModal} className="sr-only">close</button>
+                        </form>
+                    </dialog>
+                )}
+
+                {/* Event Detail Modal */}
+                {eventDetailModal && selectedEvent && (
+                    <dialog className="modal modal-open">
+                        <div className="modal-box max-w-md bg-base-100 shadow-xl rounded-xl">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-xl font-semibold text-foreground">
+                                    Event details
+                                </h2>
+                                <button
+                                    onClick={closeEventDetailModal}
+                                    className="btn btn-ghost btn-sm btn-circle focus:outline-none"
+                                    aria-label="Close modal"
+                                >
+                                    ✕
+                                </button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="card bg-base-200 p-4">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className={`badge badge-lg ${selectedEvent.type === 'breathwork'
+                                            ? 'badge-primary'
+                                            : 'badge-success'
+                                            }`}>
+                                            {selectedEvent.type === 'breathwork' ? 'Breathwork' : 'Topic'}
+                                        </div>
+                                        <span className="text-sm text-neutral">
+                                            {new Date(selectedEvent.start).toLocaleDateString()}
+                                        </span>
+                                    </div>
+
+                                    <h3 className="font-semibold text-foreground mb-2">
+                                        {selectedEvent.title}
+                                    </h3>
+
+                                    {selectedEvent.topic && (
+                                        <p className="text-neutral mb-3">
+                                            <strong>Topic:</strong> {selectedEvent.topic}
+                                        </p>
+                                    )}
+
+                                    <div className="text-sm text-neutral">
+                                        <p><strong>Facilitator:</strong> {selectedEvent.facilitator}</p>
+                                    </div>
+                                </div>
+
+                                {(userData?.displayName || user?.email) === selectedEvent.facilitator && (
+                                    <div className="flex justify-end mt-4">
+                                        <button
+                                            onClick={() => handleDeleteEvent(selectedEvent.id!)}
+                                            className="btn btn-error btn-sm text-white focus:outline-none"
+                                        >
+                                            Delete event
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <form method="dialog" className="modal-backdrop">
+                            <button onClick={closeEventDetailModal} className="sr-only">close</button>
+                        </form>
+                    </dialog>
+                )}
+            </div>
+        </ProtectedRoute>
     );
 }
 

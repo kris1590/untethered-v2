@@ -1,4 +1,5 @@
 import React from 'react';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 const commitments = [
     {
@@ -10,7 +11,7 @@ const commitments = [
             <span key="floor"><strong>Floor:</strong> You must attend at least 2 out of 4 calls each month to remain an active member (50%). If that\'s not sustainable, you\'ll be asked to step away until you have the bandwidth. Our intimacy and trust depend on a reliable presence.</span>,
             <span key="miss">If you will miss a call, let us know in advance and stay plugged in. Drop an update or share reflections in the WhatsApp chat so the connection stays alive.</span>
         ],
-        color: "bg-primary"
+        color: "bg-[#635BFF]"
     },
     {
         num: 'II',
@@ -19,7 +20,7 @@ const commitments = [
         details: [
             "Everything spoken in calls or group chats is private. We guard this space so men can speak without fear, knowing vulnerability is honored. The only exception is if someone shares intentions to harm themselves or others."
         ],
-        color: "bg-success"
+        color: "bg-[#635BFF]"
     },
     {
         num: 'III',
@@ -28,7 +29,7 @@ const commitments = [
         details: [
             "We all wear masks. The Untethered invites you to drop yours and speak honestly, even when it's hard. Here, your unfiltered truth belongs and is worthy of respect."
         ],
-        color: "bg-secondary"
+        color: "bg-[#635BFF]"
     },
     {
         num: 'IV',
@@ -37,7 +38,7 @@ const commitments = [
         details: [
             "When someone speaks, hold space without interrupting, judging, or rushing to solve their problem. Instead, offer curiosity and questions. Let each man wrestle with his own truths and find his own way."
         ],
-        color: "bg-accent"
+        color: "bg-[#635BFF]"
     },
     {
         num: 'V',
@@ -46,7 +47,7 @@ const commitments = [
         details: [
             "Connection thrives on participation both in live calls and in the WhatsApp chat (highly suggested you turn on notifications). The more you invest in the discussions, the more The Untethered becomes the community you need it to be."
         ],
-        color: "bg-error"
+        color: "bg-[#635BFF]"
     },
     {
         num: 'VI',
@@ -55,52 +56,54 @@ const commitments = [
         details: [
             "We're here to find brotherhood, not battlegrounds. Politics, religion, and other charged topics are kept out so we can focus on what connects us. Our greatest strength lies in the common ground we share."
         ],
-        color: "bg-info"
+        color: "bg-[#635BFF]"
     },
 ];
 
 export default function Commitments() {
     return (
-        <div className="bg-base-200 min-h-screen py-10">
-            <div className="max-w-4xl mx-auto px-6">
-                <div className="text-center mb-10">
-                    <h1 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
-                        Our commitments
-                    </h1>
-                    <p className="text-lg text-neutral max-w-2xl mx-auto">
-                        The foundation of trust and connection that binds our brotherhood together.
-                    </p>
-                </div>
+        <ProtectedRoute>
+            <div className="min-h-screen bg-[#f6f9fc] py-16">
+                <div className="max-w-4xl mx-auto px-6">
+                    <div className="text-center mb-16">
+                        <h1 className="text-4xl md:text-5xl font-semibold text-[#32325d] mb-6 leading-tight">
+                            Our commitments
+                        </h1>
+                        <p className="text-xl text-[#525f7f] max-w-2xl mx-auto leading-relaxed">
+                            The foundation of trust and connection that binds our brotherhood together.
+                        </p>
+                    </div>
 
-                <div className="space-y-6">
-                    {commitments.map((c) => (
-                        <div key={c.num} className="card bg-base-100 shadow-md rounded-xl">
-                            <div className="card-body p-6 md:p-8">
-                                <div className="flex gap-6 items-start">
-                                    <div className={`w-12 h-12 ${c.color} rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0`}>
-                                        {c.num}
-                                    </div>
-                                    <div className="flex-1 space-y-4">
-                                        <div>
-                                            <h2 className="text-xl font-semibold text-foreground mb-1">
-                                                {c.title}
-                                            </h2>
-                                            <p className="text-neutral font-medium">
-                                                {c.subtitle}
-                                            </p>
+                    <div className="space-y-8">
+                        {commitments.map((c) => (
+                            <div key={c.num} className="bg-white rounded-lg shadow-sm border border-[#e6ebf1] hover:shadow-md transition-shadow duration-200">
+                                <div className="p-8">
+                                    <div className="flex gap-8 items-start">
+                                        <div className={`w-14 h-14 ${c.color} rounded-lg flex items-center justify-center text-white font-bold text-xl shrink-0 shadow-sm`}>
+                                            {c.num}
                                         </div>
-                                        <div className="space-y-3 text-foreground leading-relaxed">
-                                            {c.details.map((d, i) => (
-                                                <div key={i} className="text-sm md:text-base">{d}</div>
-                                            ))}
+                                        <div className="flex-1 space-y-6">
+                                            <div>
+                                                <h2 className="text-2xl font-semibold text-[#32325d] mb-2 leading-tight">
+                                                    {c.title}
+                                                </h2>
+                                                <p className="text-[#525f7f] font-medium text-lg">
+                                                    {c.subtitle}
+                                                </p>
+                                            </div>
+                                            <div className="space-y-4 text-[#32325d] leading-relaxed">
+                                                {c.details.map((d, i) => (
+                                                    <div key={i} className="text-base">{d}</div>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+        </ProtectedRoute>
     );
 }

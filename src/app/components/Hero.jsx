@@ -29,12 +29,12 @@ export function Hero() {
       <div className="absolute inset-0 bg-black/60 z-0"></div>
 
       <div className="hero-content text-neutral-content text-center relative z-10 flex flex-col items-center">
-        <div className="max-w-md">
+        <div className="">
           <h1 className="mb-5 text-5xl font-bold">
             Empower Your Team,<br />
             <span className="text-blue-400">Elevate Your Brotherhood</span>
           </h1>
-          <p className="mb-5">
+          <p className="mb-5 max-w-xl">
             Welcome to Untethered, a place where connection meets growth.
             Join a community built on trust, honesty, and purpose—where every
             member helps shape the culture.
