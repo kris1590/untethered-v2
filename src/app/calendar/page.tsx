@@ -23,6 +23,21 @@ const calendarStyles = `
   .fc-toolbar-title {
     color: black !important;
   }
+  @media (max-width: 640px) {
+    .fc-toolbar-title {
+      font-size: 0.95rem !important;
+      line-height: 1.5 !important;
+      letter-spacing: 0.02em !important;
+      padding: 0.25rem 0.5rem !important;
+      text-align: center !important;
+      margin: 0.5rem auto 0.25rem auto !important;
+      width: 100%;
+      display: block;
+    }
+    .fc-header-toolbar {
+      gap: 0.5rem !important;
+    }
+  }
   .fc-button {
     color: black !important;
     background-color: hsl(var(--b2)) !important;

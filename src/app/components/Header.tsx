@@ -53,7 +53,7 @@ export default function Header() {
                                     <li key={link.href}>
                                         <a
                                             href={link.href}
-                                            className="text-neutral hover:text-primary font-medium px-4 py-2 rounded-lg hover:bg-base-200 transition-colors focus:outline-none"
+                                            className="uppercase text-neutral hover:text-primary font-medium px-4 py-2 rounded-lg hover:bg-base-200 transition-colors focus:outline-none"
                                         >
                                             {link.label}
                                         </a>

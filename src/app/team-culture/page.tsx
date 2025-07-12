@@ -60,7 +60,7 @@ export default function TeamCulture() {
                                 <h2 className="card-title text-xl font-semibold text-foreground mb-4">
                                     Vision
                                 </h2>
-                                <p className="text-foreground leading-relaxed">
+                                <p className="text-foreground text-base leading-relaxed">
                                     The Untethered is about the pursuit of freedom: freedom from self-limiting beliefs,
                                     approval seeking, and the patterns in our life that have held us back from stepping into our full potential.
                                 </p>
@@ -73,7 +73,7 @@ export default function TeamCulture() {
                                 <h2 className="card-title text-xl font-semibold text-foreground mb-4">
                                     Purpose
                                 </h2>
-                                <p className="text-foreground leading-relaxed">
+                                <p className="text-foreground text-base leading-relaxed">
                                     The Untethered is a community where men gather for genuine connection, honest dialogue,
                                     and the pursuit of growth that elevates both the individual and the group as a whole.
                                 </p>
@@ -97,7 +97,7 @@ export default function TeamCulture() {
                                                 <h3 className="font-semibold text-foreground mb-1">
                                                     {v.title}
                                                 </h3>
-                                                <p className="text-neutral text-sm leading-relaxed">
+                                                <p className="text-neutral text-base leading-relaxed">
                                                     {v.text}
                                                 </p>
                                             </div>
