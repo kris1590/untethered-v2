@@ -26,8 +26,8 @@ export default function Header() {
                             <ul
                                 tabIndex={0}
                                 className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                                <li><a>Team Culture</a></li>
-                                <li><a>Commitments</a></li>
+                                <li><a href="/team-culture">Team Culture</a></li>
+                                <li><a href="/commitments">Commitments</a></li>
                                 <li><a>Goals</a></li>
                                 <li><a>Resources</a></li>
                                 <li><a>Calendar</a></li>
@@ -39,8 +39,8 @@ export default function Header() {
                 <div className="navbar-center hidden lg:flex">
                     {user ? (
                         <ul className="menu menu-horizontal px-1">
-                            <li><a>Team Culture</a></li>
-                            <li><a>Commitments</a></li>
+                            <li><a href="/team-culture">Team Culture</a></li>
+                            <li><a href="/commitments">Commitments</a></li>
                             <li><a>Goals</a></li>
                             <li><a>Resources</a></li>
                             <li><a>Calendar</a></li>

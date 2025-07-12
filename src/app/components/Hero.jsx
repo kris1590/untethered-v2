@@ -1,23 +1,14 @@
 "use client";
 
-
-import React from "react";
+import React, { useState } from "react";
+import LoginModal from "./auth/LoginModal";
+import SignUpModal from "./auth/SignUpModal";
+import { useAuth } from "../../lib/auth-context";
 
 export function Hero() {
-  const openLoginModal = () => {
-    const modal = document.getElementById('login-modal');
-    if (modal) {
-      modal.showModal();
-    }
-  };
-
-  const openSignUpModal = () => {
-    const modal = document.getElementById('signup-modal');
-    if (modal) {
-      modal.showModal();
-    }
-  };
-
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const { user } = useAuth();
   return (
     <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28">
       <div className="container">
@@ -30,10 +21,12 @@ export function Hero() {
               Welcome to our platform, where collaboration meets productivity.
               Join us in transforming how your team connects and grows together.
             </p>
-            <div className="mt-6 flex flex-wrap gap-4 md:mt-8">
-              <button onClick={openLoginModal} className="btn btn-primary">Sign In</button>
-              <button onClick={openSignUpModal} className="btn btn-primary">Sign Up</button>
-            </div>
+            {!user ? (
+              <div className="mt-6 flex flex-wrap gap-4 md:mt-8">
+                <button onClick={() => setIsLoginOpen(true)} className="btn btn-primary">Sign In</button>
+                <button onClick={() => setIsSignUpOpen(true)} className="btn btn-primary">Sign Up</button>
+              </div>
+            ) : null}
           </div>
           <div>
             <img
@@ -44,6 +37,22 @@ export function Hero() {
           </div>
         </div>
       </div>
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={() => setIsLoginOpen(false)}
+        onSwitchToSignUp={() => {
+          setIsLoginOpen(false);
+          setIsSignUpOpen(true);
+        }}
+      />
+      <SignUpModal
+        isOpen={isSignUpOpen}
+        onClose={() => setIsSignUpOpen(false)}
+        onSwitchToLogin={() => {
+          setIsSignUpOpen(false);
+          setIsLoginOpen(true);
+        }}
+      />
     </section>
   );
 }
