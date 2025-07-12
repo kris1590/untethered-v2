@@ -32,16 +32,59 @@ export async function getUsers() {
   return snap.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
 }
 
-// Get user's goal data
-export async function getUserGoal(uid: string) {
-  const ref = doc(db, "goals", uid);
+// Get user's goal data for a specific month/year
+export async function getUserGoal(uid: string, monthYear?: string) {
+  const monthKey = monthYear || getCurrentMonthYear();
+  const docId = `${uid}_${monthKey.replace('/', '_')}`;
+  const ref = doc(db, "goals", docId);
   const snap = await getDoc(ref);
-  return snap.exists() ? snap.data() : {};
+  if (snap.exists()) {
+    return snap.data();
+  } else {
+    // Return default structure for empty months
+    return {
+      monthlyGoal: undefined,
+      weeklyGoals: [
+        { goal: "", note: "" },
+        { goal: "", note: "" },
+        { goal: "", note: "" },
+        { goal: "", note: "" }
+      ]
+    };
+  }
+}
+
+// Get current month/year in MM/YYYY format
+export function getCurrentMonthYear(): string {
+  const now = new Date();
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  const year = now.getFullYear();
+  return `${month}/${year}`;
+}
+
+// Get all available months for a user
+export async function getUserMonths(uid: string) {
+  const userGoalsRef = collection(db, "goals");
+  const snap = await getDocs(userGoalsRef);
+  const months = snap.docs
+    .filter(doc => doc.id.startsWith(`${uid}_`))
+    .map(doc => doc.id.replace(`${uid}_`, '').replace('_', '/'))
+    .sort((a, b) => {
+      // Sort by date (newest first)
+      const [monthA, yearA] = a.split('/');
+      const [monthB, yearB] = b.split('/');
+      const dateA = new Date(parseInt(yearA), parseInt(monthA) - 1);
+      const dateB = new Date(parseInt(yearB), parseInt(monthB) - 1);
+      return dateB.getTime() - dateA.getTime();
+    });
+  return months;
 }
 
 // Set monthly goal (if not already set)
-export async function setMonthlyGoal(uid: string, monthlyGoal: string) {
-  const ref = doc(db, "goals", uid);
+export async function setMonthlyGoal(uid: string, monthlyGoal: string, monthYear?: string) {
+  const monthKey = monthYear || getCurrentMonthYear();
+  const docId = `${uid}_${monthKey.replace('/', '_')}`;
+  const ref = doc(db, "goals", docId);
   const snap = await getDoc(ref);
   // If monthly goal already set, don't overwrite
   if (snap.exists() && snap.data().monthlyGoal) throw new Error("Monthly goal already set.");
@@ -59,8 +102,10 @@ export async function setMonthlyGoal(uid: string, monthlyGoal: string) {
 }
 
 // Add or update a weekly goal for a given weekIdx
-export async function addWeeklyGoal(uid: string, weekIdx: number, goal: string) {
-  const ref = doc(db, "goals", uid);
+export async function addWeeklyGoal(uid: string, weekIdx: number, goal: string, monthYear?: string) {
+  const monthKey = monthYear || getCurrentMonthYear();
+  const docId = `${uid}_${monthKey.replace('/', '_')}`;
+  const ref = doc(db, "goals", docId);
   const snap = await getDoc(ref);
   let data = snap.exists() ? snap.data() : {};
   let weeks = data.weeklyGoals || [{ goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }];
@@ -71,8 +116,10 @@ export async function addWeeklyGoal(uid: string, weekIdx: number, goal: string) 
 }
 
 // Add or update a weekly note for a given weekIdx
-export async function updateWeeklyNote(uid: string, weekIdx: number, note: string) {
-  const ref = doc(db, "goals", uid);
+export async function updateWeeklyNote(uid: string, weekIdx: number, note: string, monthYear?: string) {
+  const monthKey = monthYear || getCurrentMonthYear();
+  const docId = `${uid}_${monthKey.replace('/', '_')}`;
+  const ref = doc(db, "goals", docId);
   const snap = await getDoc(ref);
   let data = snap.exists() ? snap.data() : {};
   let weeks = data.weeklyGoals || [{ goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }];

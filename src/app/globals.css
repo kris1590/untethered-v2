@@ -91,6 +91,41 @@ body {
   margin-bottom: 0.5rem;
 }
 
+/* Badge padding */
+.badge {
+  padding: 0.5rem 1rem !important;
+}
+
+/* Button border styling */
+.btn {
+  border-width: 1px !important;
+}
+
+.btn-outline {
+  border-width: 1px !important;
+}
+
+/* Card border styling */
+.card {
+  border: 1px solid var(--color-primary) !important;
+}
+
+/* Input field border styling */
+.input,
+.textarea,
+.select,
+.file-input {
+  border: 1px solid var(--color-primary) !important;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus,
+.file-input:focus {
+  border-color: var(--color-primary-focus) !important;
+  box-shadow: 0 0 0 2px var(--color-primary) !important;
+}
+
 /* Modal improvements */
 .modal-box {
   max-width: 32rem;

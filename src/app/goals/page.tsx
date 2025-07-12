@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { getUsers, getUserGoal, setMonthlyGoal, addWeeklyGoal, updateWeeklyNote } from "@/lib/firebase";
+import { getUsers, getUserGoal, setMonthlyGoal, addWeeklyGoal, updateWeeklyNote, getUserMonths, getCurrentMonthYear } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
+import { HiChevronDown } from "react-icons/hi2";
 
 // Type definitions
 interface User {
@@ -22,21 +23,41 @@ interface UserGoals {
 function getCurrentWeekNumberInMonth() {
     // Returns 0-based week of the month (0 = week 1, 1 = week 2, ...)
     const today = new Date();
-    const first = new Date(today.getFullYear(), today.getMonth(), 1);
-    const dayOfWeek = first.getDay();
     const day = today.getDate();
     // Calculate which week of the month we're in
     // Week 1: days 1-7, Week 2: days 8-14, etc.
     return Math.floor((day - 1) / 7);
 }
 
+function formatMonthYear(monthYear: string): string {
+    const [month, year] = monthYear.split('/');
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+
+function getNextMonth(monthYear: string): string {
+    const [month, year] = monthYear.split('/');
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    date.setMonth(date.getMonth() + 1);
+    return `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+}
+
+function getPreviousMonth(monthYear: string): string {
+    const [month, year] = monthYear.split('/');
+    const date = new Date(parseInt(year), parseInt(month) - 1);
+    date.setMonth(date.getMonth() - 1);
+    return `${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
+}
+
 export default function GoalsTracker() {
     const { user } = useAuth();
-    console.log(user);
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUid, setSelectedUid] = useState(user?.uid || "");
     const [userGoals, setUserGoals] = useState<UserGoals | null>(null);
     const [loading, setLoading] = useState(false);
+    const [availableMonths, setAvailableMonths] = useState<string[]>([]);
+    const [currentMonthYear, setCurrentMonthYear] = useState(getCurrentMonthYear());
+    const [selectedMonthYear, setSelectedMonthYear] = useState(getCurrentMonthYear());
 
     // For adding new monthly goal
     const [monthlyGoal, setMonthlyGoalText] = useState("");
@@ -47,31 +68,85 @@ export default function GoalsTracker() {
     const [weeklyNoteInputs, setWeeklyNoteInputs] = useState<string[]>(["", "", "", ""]);
     const [savingWeek, setSavingWeek] = useState<number | null>(null);
 
-    // On mount, fetch all users
-    useEffect(() => { getUsers().then(setUsers); }, []);
+    // Pagination for previous months
+    const [currentPage, setCurrentPage] = useState(1);
+    const monthsPerPage = 6;
 
-    // When selected user changes, fetch their goals
+    // On mount, fetch all users and available months
+    useEffect(() => {
+        getUsers().then(setUsers);
+        if (user?.uid) {
+            getUserMonths(user.uid).then(setAvailableMonths);
+        }
+    }, [user?.uid]);
+
+    // When selected user changes, fetch their months and goals
     useEffect(() => {
         if (!selectedUid) return;
         setLoading(true);
-        getUserGoal(selectedUid).then((goals: UserGoals) => {
+        getUserMonths(selectedUid).then(months => {
+            setAvailableMonths(months);
+            setLoading(false);
+        });
+    }, [selectedUid]);
+
+    // When selected month changes, fetch goals for that month
+    useEffect(() => {
+        if (!selectedUid || !selectedMonthYear) return;
+        setLoading(true);
+        getUserGoal(selectedUid, selectedMonthYear).then((goals: UserGoals) => {
             setUserGoals(goals);
             setLoading(false);
 
             // Set local state for weekly goals and notes
-            const weeks = goals?.weeklyGoals || [];
+            const weeks = goals?.weeklyGoals || [
+                { goal: "", note: "" },
+                { goal: "", note: "" },
+                { goal: "", note: "" },
+                { goal: "", note: "" }
+            ];
             setWeeklyGoalInputs([0, 1, 2, 3].map(i => weeks[i]?.goal || ""));
             setWeeklyNoteInputs([0, 1, 2, 3].map(i => weeks[i]?.note || ""));
+        }).catch(error => {
+            console.error('Error fetching goals:', error);
+            setLoading(false);
+            // Set default empty structure on error
+            setUserGoals({
+                monthlyGoal: undefined,
+                weeklyGoals: [
+                    { goal: "", note: "" },
+                    { goal: "", note: "" },
+                    { goal: "", note: "" },
+                    { goal: "", note: "" }
+                ]
+            });
         });
-    }, [selectedUid]);
+    }, [selectedUid, selectedMonthYear]);
+
+    // Update current month/year when it changes
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const newCurrentMonth = getCurrentMonthYear();
+            if (newCurrentMonth !== currentMonthYear) {
+                setCurrentMonthYear(newCurrentMonth);
+                // If we're viewing the old current month, switch to new current month
+                if (selectedMonthYear === currentMonthYear) {
+                    setSelectedMonthYear(newCurrentMonth);
+                }
+            }
+        }, 60000); // Check every minute
+
+        return () => clearInterval(interval);
+    }, [currentMonthYear, selectedMonthYear]);
 
     const currentWeek = getCurrentWeekNumberInMonth();
+    const isCurrentMonth = selectedMonthYear === currentMonthYear;
 
     // Save monthly goal (only if not already set)
     const handleSetMonthlyGoal = async () => {
         if (!user?.uid) return;
         setAddingMonthly(true);
-        await setMonthlyGoal(user.uid, monthlyGoal);
+        await setMonthlyGoal(user.uid, monthlyGoal, selectedMonthYear);
         setMonthlyGoalText("");
         setAddingMonthly(false);
 
@@ -88,13 +163,13 @@ export default function GoalsTracker() {
         setSavingWeek(weekIdx);
         // Save main weekly goal (if not yet set)
         if (!userGoals?.weeklyGoals?.[weekIdx]?.goal && weeklyGoalInputs[weekIdx]) {
-            await addWeeklyGoal(user.uid, weekIdx, weeklyGoalInputs[weekIdx]); // Now pass index
+            await addWeeklyGoal(user.uid, weekIdx, weeklyGoalInputs[weekIdx], selectedMonthYear);
         }
         // Always save notes
-        await updateWeeklyNote(user.uid, weekIdx, weeklyNoteInputs[weekIdx]);
+        await updateWeeklyNote(user.uid, weekIdx, weeklyNoteInputs[weekIdx], selectedMonthYear);
         setSavingWeek(null);
         // Refetch
-        getUserGoal(selectedUid).then((goals: UserGoals) => {
+        getUserGoal(selectedUid, selectedMonthYear).then((goals: UserGoals) => {
             setUserGoals(goals);
         });
     };
@@ -107,6 +182,26 @@ export default function GoalsTracker() {
         setWeeklyNoteInputs(arr => arr.map((v, i) => i === idx ? value : v));
     };
 
+    // Navigation handlers
+    const handleNextMonth = () => {
+        setSelectedMonthYear(getNextMonth(selectedMonthYear));
+        setCurrentPage(1);
+    };
+
+    const handlePreviousMonth = () => {
+        setSelectedMonthYear(getPreviousMonth(selectedMonthYear));
+        setCurrentPage(1);
+    };
+
+    const handleGoToCurrentMonth = () => {
+        setSelectedMonthYear(currentMonthYear);
+        setCurrentPage(1);
+    };
+
+    // Pagination for previous months
+    const paginatedMonths = availableMonths.slice((currentPage - 1) * monthsPerPage, currentPage * monthsPerPage);
+    const totalPages = Math.ceil(availableMonths.length / monthsPerPage);
+
     return (
         <div className="bg-base-200 min-h-screen py-10">
             <div className="max-w-4xl mx-auto px-6">
@@ -116,20 +211,65 @@ export default function GoalsTracker() {
                             Monthly goal tracker
                         </h1>
 
+                        {/* Month/Year Display and Navigation */}
+                        <div className="flex items-center justify-between mb-6">
+                            <button
+                                onClick={handlePreviousMonth}
+                                className="btn btn-primary btn-sm"
+                            >
+                                ← Previous
+                            </button>
+                            <div className="text-center">
+                                <h2 className="text-xl font-semibold text-foreground">
+                                    {formatMonthYear(selectedMonthYear)}
+                                </h2>
+                                {isCurrentMonth && (
+                                    <span className="badge badge-primary badge-sm mt-1">Current Month</span>
+                                )}
+                            </div>
+                            <button
+                                onClick={handleNextMonth}
+                                className="btn btn-primary btn-sm"
+                            >
+                                Next →
+                            </button>
+                        </div>
+
+                        {/* Quick Navigation to Current Month */}
+                        {!isCurrentMonth && (
+                            <div className="text-center mb-6">
+                                <button
+                                    onClick={handleGoToCurrentMonth}
+                                    className="btn btn-primary btn-sm"
+                                >
+                                    Go to Current Month
+                                </button>
+                            </div>
+                        )}
+
                         {/* User Selector */}
                         <div className="form-control mb-8">
                             <label className="label">
                                 <span className="label-text font-medium text-foreground">Select member:</span>
                             </label>
-                            <select
-                                className="select select-bordered w-full max-w-xs focus:outline-none"
-                                value={selectedUid}
-                                onChange={e => setSelectedUid(e.target.value)}
-                            >
-                                {users.map(u => (
-                                    <option key={u.uid} value={u.uid}>{u.displayName || u.email}</option>
-                                ))}
-                            </select>
+                            <div className="dropdown dropdown-start w-full max-w-xs ">
+                                <div tabIndex={0} role="button" className="btn btn-outline w-full justify-between">
+                                    {users.find(u => u.uid === selectedUid)?.displayName || users.find(u => u.uid === selectedUid)?.email || "Select member"}
+                                    <HiChevronDown className="h-4 w-4" />
+                                </div>
+                                <ul tabIndex={0} className="dropdown-content menu bg-base-100 rounded-box z-[1] w-full p-2 shadow-sm">
+                                    {users.map(u => (
+                                        <li key={u.uid}>
+                                            <a
+                                                onClick={() => setSelectedUid(u.uid)}
+                                                className={selectedUid === u.uid ? "active" : ""}
+                                            >
+                                                {u.displayName || u.email}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
 
                         {loading ? (
@@ -149,7 +289,7 @@ export default function GoalsTracker() {
                                             <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 text-foreground">
                                                 {userGoals.monthlyGoal}
                                             </div>
-                                        ) : selectedUid === user?.uid ? (
+                                        ) : selectedUid === user?.uid && isCurrentMonth ? (
                                             <div className="space-y-4">
                                                 <input
                                                     className="input input-bordered w-full focus:outline-none"
@@ -190,7 +330,7 @@ export default function GoalsTracker() {
                                                     <h3 className="font-semibold text-foreground">
                                                         Week {idx + 1}
                                                     </h3>
-                                                    {idx === currentWeek && (
+                                                    {idx === currentWeek && isCurrentMonth && (
                                                         <span className="badge badge-primary badge-sm">Current</span>
                                                     )}
                                                 </div>
@@ -201,7 +341,7 @@ export default function GoalsTracker() {
                                                         <div className="text-foreground bg-base-200 rounded-lg px-3 py-2">
                                                             {userGoals.weeklyGoals[idx].goal}
                                                         </div>
-                                                    ) : (selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) ? (
+                                                    ) : (selectedUid === user?.uid && idx === currentWeek && isCurrentMonth && userGoals?.monthlyGoal) ? (
                                                         <input
                                                             className="input input-bordered w-full focus:outline-none"
                                                             value={weeklyGoalInputs[idx]}
@@ -215,7 +355,7 @@ export default function GoalsTracker() {
 
                                                 {/* Additional note */}
                                                 <div className="mb-3">
-                                                    {(selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) ? (
+                                                    {(selectedUid === user?.uid && idx === currentWeek && isCurrentMonth && userGoals?.monthlyGoal) ? (
                                                         <textarea
                                                             className="textarea textarea-bordered w-full focus:outline-none"
                                                             value={weeklyNoteInputs[idx]}
@@ -231,7 +371,7 @@ export default function GoalsTracker() {
                                                 </div>
 
                                                 {/* Save Button */}
-                                                {(selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) && (
+                                                {(selectedUid === user?.uid && idx === currentWeek && isCurrentMonth && userGoals?.monthlyGoal) && (
                                                     <button
                                                         onClick={() => handleSaveWeek(idx)}
                                                         disabled={savingWeek === idx || (!weeklyGoalInputs[idx] && !weeklyNoteInputs[idx])}
@@ -251,6 +391,47 @@ export default function GoalsTracker() {
                                         </div>
                                     ))}
                                 </div>
+
+                                {/* Previous Months Pagination */}
+                                {availableMonths.length > 1 && (
+                                    <div className="card bg-base-100 shadow-sm border mt-8">
+                                        <div className="card-body">
+                                            <h3 className="text-lg font-semibold text-foreground mb-4">Previous Months</h3>
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                                                {paginatedMonths.map(month => (
+                                                    <button
+                                                        key={month}
+                                                        onClick={() => setSelectedMonthYear(month)}
+                                                        className={`btn btn-sm ${selectedMonthYear === month ? 'btn-primary' : 'btn-outline'}`}
+                                                    >
+                                                        {formatMonthYear(month)}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            {totalPages > 1 && (
+                                                <div className="flex justify-center gap-2">
+                                                    <button
+                                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                                        disabled={currentPage === 1}
+                                                        className="btn btn-sm btn-primary"
+                                                    >
+                                                        Previous
+                                                    </button>
+                                                    <span className="flex items-center px-3">
+                                                        Page {currentPage} of {totalPages}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                                        disabled={currentPage === totalPages}
+                                                        className="btn btn-sm btn-primary"
+                                                    >
+                                                        Next
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
                     </div>

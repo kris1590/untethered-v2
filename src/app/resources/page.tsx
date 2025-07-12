@@ -61,6 +61,7 @@ export default function ResourcePage() {
         }
 
         const uploadedBy = userData?.displayName || user?.email?.split('@')[0] || 'Anonymous';
+        console.log('Creating resource with uploadedBy:', uploadedBy);
         setLoading(true);
         try {
             let fileUrl = '';
@@ -143,6 +144,7 @@ export default function ResourcePage() {
     const handleDeleteResource = async (resource: Resource) => {
         if (!resource.id || !user) return;
         const currentUser = userData?.displayName || user?.email?.split('@')[0] || 'Anonymous';
+        console.log('Delete check - Resource uploaded by:', resource.uploadedBy, 'Current user:', currentUser);
         if (resource.uploadedBy !== currentUser) {
             setShowToast({ type: 'error', message: 'You can only delete resources you uploaded.' });
             setTimeout(() => setShowToast(null), 3000);
@@ -191,6 +193,12 @@ export default function ResourcePage() {
                     <p className="text-lg text-neutral max-w-2xl mx-auto">
                         Share and discover valuable resources: articles, videos, PDFs and more.
                     </p>
+                    {/* Debug info */}
+                    <div className="mt-4 p-2 bg-base-200 rounded text-xs">
+                        <p>Current user: {userData?.displayName || user?.email?.split('@')[0] || 'Anonymous'}</p>
+                        <p>User email: {user?.email}</p>
+                        <p>UserData displayName: {userData?.displayName}</p>
+                    </div>
                 </div>
                 {/* Upload Form */}
                 <div className="card bg-base-100 shadow-md rounded-xl mb-6">
@@ -298,7 +306,9 @@ export default function ResourcePage() {
                     ) : (
                         <div className="grid gap-4 sm:gap-6">
                             {resources.map(res => {
-                                const canDelete = res.uploadedBy === (user?.displayName || user?.email?.split('@')[0] || 'Anonymous');
+                                const currentUser = userData?.displayName || user?.email?.split('@')[0] || 'Anonymous';
+                                const canDelete = res.uploadedBy === currentUser;
+
                                 return (
                                     <div key={res.id || res.link} className="card shadow-sm bg-base-100 rounded-xl p-4 sm:p-6 flex flex-col">
                                         <div className="flex items-start justify-between gap-2">
