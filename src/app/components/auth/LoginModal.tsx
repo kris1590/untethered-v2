@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../../lib/firebase';
+import { useToast } from '../../../lib/toast-context';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -13,23 +14,23 @@ interface LoginModalProps {
 export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
+    const { addToast } = useToast();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError('');
         setLoading(true);
 
         try {
             await signInWithEmailAndPassword(auth, email, password);
+            addToast('success', 'Successfully logged in!');
             onClose();
             setEmail('');
             setPassword('');
             setRememberMe(false);
         } catch (error: any) {
-            setError(error.message);
+            addToast('error', error.message);
         } finally {
             setLoading(false);
         }
@@ -93,15 +94,6 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
                             <span className="label-text text-foreground">Remember me</span>
                         </label>
                     </div>
-
-                    {error && (
-                        <div className="alert alert-error">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span>{error}</span>
-                        </div>
-                    )}
 
                     <button
                         type="submit"

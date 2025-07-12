@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { getUsers, getUserGoal, setMonthlyGoal, addWeeklyGoal, updateWeeklyNote, getUserMonths, getCurrentMonthYear } from "@/lib/firebase";
 import { useAuth } from "@/lib/auth-context";
+import { useToast } from "@/lib/toast-context";
 import { HiChevronDown } from "react-icons/hi2";
 
 // Type definitions
@@ -50,7 +51,8 @@ function getPreviousMonth(monthYear: string): string {
 }
 
 export default function GoalsTracker() {
-    const { user } = useAuth();
+    const { user, userData } = useAuth();
+    const { addToast } = useToast();
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUid, setSelectedUid] = useState(user?.uid || "");
     const [userGoals, setUserGoals] = useState<UserGoals | null>(null);
@@ -146,32 +148,45 @@ export default function GoalsTracker() {
     const handleSetMonthlyGoal = async () => {
         if (!user?.uid) return;
         setAddingMonthly(true);
-        await setMonthlyGoal(user.uid, monthlyGoal, selectedMonthYear);
-        setMonthlyGoalText("");
-        setAddingMonthly(false);
+        try {
+            await setMonthlyGoal(user.uid, monthlyGoal, selectedMonthYear);
+            setMonthlyGoalText("");
 
-        // Update local state to reflect the new goal
-        setUserGoals(prev => ({
-            ...prev,
-            monthlyGoal: monthlyGoal
-        }));
+            // Update local state to reflect the new goal
+            setUserGoals(prev => ({
+                ...prev,
+                monthlyGoal: monthlyGoal
+            }));
+            addToast('success', 'Monthly goal set successfully!');
+        } catch (error) {
+            addToast('error', 'Failed to set monthly goal. Please try again.');
+        } finally {
+            setAddingMonthly(false);
+        }
     };
 
     // Handle editing of weekly goal or note
     const handleSaveWeek = async (weekIdx: number) => {
         if (!user?.uid) return;
         setSavingWeek(weekIdx);
-        // Save main weekly goal (if not yet set)
-        if (!userGoals?.weeklyGoals?.[weekIdx]?.goal && weeklyGoalInputs[weekIdx]) {
-            await addWeeklyGoal(user.uid, weekIdx, weeklyGoalInputs[weekIdx], selectedMonthYear);
+        try {
+            // Save main weekly goal (if not yet set)
+            if (!userGoals?.weeklyGoals?.[weekIdx]?.goal && weeklyGoalInputs[weekIdx]) {
+                await addWeeklyGoal(user.uid, weekIdx, weeklyGoalInputs[weekIdx], selectedMonthYear);
+            }
+            // Always save notes
+            await updateWeeklyNote(user.uid, weekIdx, weeklyNoteInputs[weekIdx], selectedMonthYear);
+
+            // Refetch
+            getUserGoal(selectedUid, selectedMonthYear).then((goals: UserGoals) => {
+                setUserGoals(goals);
+            });
+            addToast('success', 'Weekly progress saved successfully!');
+        } catch (error) {
+            addToast('error', 'Failed to save weekly progress. Please try again.');
+        } finally {
+            setSavingWeek(null);
         }
-        // Always save notes
-        await updateWeeklyNote(user.uid, weekIdx, weeklyNoteInputs[weekIdx], selectedMonthYear);
-        setSavingWeek(null);
-        // Refetch
-        getUserGoal(selectedUid, selectedMonthYear).then((goals: UserGoals) => {
-            setUserGoals(goals);
-        });
     };
 
     // Local change handlers

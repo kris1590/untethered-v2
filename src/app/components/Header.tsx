@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '../../lib/auth-context';
+import { useToast } from '../../lib/toast-context';
 import LoginModal from './auth/LoginModal';
 import SignUpModal from './auth/SignUpModal';
 
@@ -15,12 +16,18 @@ const navLinks = [
 
 export default function Header() {
     const { user, userData, logout } = useAuth();
+    const { addToast } = useToast();
     const [menuOpen, setMenuOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
 
     const handleLogout = async () => {
-        await logout();
+        try {
+            await logout();
+            addToast('success', 'Successfully logged out!');
+        } catch (error) {
+            addToast('error', 'Failed to logout. Please try again.');
+        }
     };
 
     return (

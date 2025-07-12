@@ -8,6 +8,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, getDocs, Timestamp, deleteDoc, doc } from 'firebase/firestore';
 import { useAuth } from '@/lib/auth-context';
+import { useToast } from '@/lib/toast-context';
 // FullCalendar CSS will be loaded automatically by the components
 
 // Custom CSS to make all calendar content black and buttons consistent
@@ -127,6 +128,7 @@ export default function FullCalendarPage() {
     const [loading, setLoading] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
     const [eventDetailModal, setEventDetailModal] = useState(false);
+    const { addToast } = useToast();
 
     // Fetch events from Firestore
     useEffect(() => {
@@ -164,6 +166,20 @@ export default function FullCalendarPage() {
     const handleAddEvent = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!modalDate || !option || (option === 'topic' && !topic)) return;
+
+        // Check if there's already an event of the same type on this date
+        const selectedDate = new Date(modalDate);
+        const existingEventOfSameType = events.find(event => {
+            const eventDate = new Date(event.start);
+            return eventDate.toDateString() === selectedDate.toDateString() && event.type === option;
+        });
+
+        if (existingEventOfSameType) {
+            const eventType = option === 'breathwork' ? 'breathwork session' : 'topic';
+            addToast('error', `A ${eventType} already exists for ${selectedDate.toLocaleDateString()}. Please choose a different date or event type.`);
+            return;
+        }
+
         setLoading(true);
 
         const evt: CalendarEvent = {
@@ -187,6 +203,9 @@ export default function FullCalendarPage() {
             setModalOpen(false);
             setOption(null);
             setTopic('');
+            addToast('success', 'Event booked successfully!');
+        } catch (error) {
+            addToast('error', 'Failed to book event. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -209,7 +228,7 @@ export default function FullCalendarPage() {
         const currentUserDisplayName = userData?.displayName || user?.email || 'Unknown';
 
         if (!event || event.facilitator !== currentUserDisplayName) {
-            alert('You can only delete your own events');
+            addToast('error', 'You can only delete your own events');
             return;
         }
 
@@ -225,9 +244,10 @@ export default function FullCalendarPage() {
             setEvents(events.filter(e => e.id !== eventId));
             setEventDetailModal(false);
             setSelectedEvent(null);
+            addToast('success', 'Event deleted successfully!');
         } catch (error) {
             console.error('Error deleting event:', error);
-            alert('Failed to delete event. Please try again.');
+            addToast('error', 'Failed to delete event. Please try again.');
         }
     };
 
@@ -435,9 +455,6 @@ export default function FullCalendarPage() {
 
                                 <div className="text-sm text-neutral">
                                     <p><strong>Facilitator:</strong> {selectedEvent.facilitator}</p>
-                                    {selectedEvent.facilitatorEmail && (
-                                        <p><strong>Email:</strong> {selectedEvent.facilitatorEmail}</p>
-                                    )}
                                 </div>
                             </div>
 

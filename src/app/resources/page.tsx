@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '@/lib/firebase';
 import { useAuth } from '@/lib/auth-context';
+import { useToast } from '@/lib/toast-context';
 import {
     collection, addDoc, getDocs, deleteDoc, doc, Timestamp, orderBy, query,
 } from 'firebase/firestore';
@@ -22,6 +23,7 @@ type Resource = {
 
 export default function ResourcePage() {
     const { user, userData } = useAuth();
+    const { addToast } = useToast();
     const [resources, setResources] = useState<Resource[]>([]);
     const [form, setForm] = useState({ topic: '', description: '', link: '' });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -29,7 +31,6 @@ export default function ResourcePage() {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
     const [deletingResource, setDeletingResource] = useState<string | null>(null);
-    const [showToast, setShowToast] = useState<{ type: 'success' | 'error', message: string } | null>(null);
     const [expandedResource, setExpandedResource] = useState<string | null>(null);
 
     useEffect(() => {
@@ -55,12 +56,11 @@ export default function ResourcePage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!form.topic || (!form.link && !selectedFile) || !user) {
-            setShowToast({ type: 'error', message: 'Please provide either a link or upload a file.' });
-            setTimeout(() => setShowToast(null), 3000);
+            addToast('error', 'Please provide either a link or upload a file.');
             return;
         }
 
-        const uploadedBy = userData?.displayName || user?.email?.split('@')[0] || 'Anonymous';
+        const uploadedBy = userData?.displayName || user?.displayName || 'Anonymous';
         console.log('Creating resource with uploadedBy:', uploadedBy);
         setLoading(true);
         try {
@@ -92,11 +92,9 @@ export default function ResourcePage() {
             setForm({ topic: '', description: '', link: '' });
             setSelectedFile(null);
             setFileError('');
-            setShowToast({ type: 'success', message: 'Resource added successfully!' });
-            setTimeout(() => setShowToast(null), 3000);
+            addToast('success', 'Resource added successfully!');
         } catch (err) {
-            setShowToast({ type: 'error', message: 'Failed to upload resource. Please try again.' });
-            setTimeout(() => setShowToast(null), 3000);
+            addToast('error', 'Failed to upload resource. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -143,11 +141,10 @@ export default function ResourcePage() {
 
     const handleDeleteResource = async (resource: Resource) => {
         if (!resource.id || !user) return;
-        const currentUser = userData?.displayName || user?.email?.split('@')[0] || 'Anonymous';
+        const currentUser = userData?.displayName || user?.displayName || 'Anonymous';
         console.log('Delete check - Resource uploaded by:', resource.uploadedBy, 'Current user:', currentUser);
         if (resource.uploadedBy !== currentUser) {
-            setShowToast({ type: 'error', message: 'You can only delete resources you uploaded.' });
-            setTimeout(() => setShowToast(null), 3000);
+            addToast('error', 'You can only delete resources you uploaded.');
             return;
         }
         setDeletingResource(resource.id);
@@ -160,11 +157,9 @@ export default function ResourcePage() {
                 } catch (error) { }
             }
             setResources(resources.filter(r => r.id !== resource.id));
-            setShowToast({ type: 'success', message: 'Resource deleted successfully!' });
-            setTimeout(() => setShowToast(null), 3000);
+            addToast('success', 'Resource deleted successfully!');
         } catch (error) {
-            setShowToast({ type: 'error', message: 'Failed to delete resource.' });
-            setTimeout(() => setShowToast(null), 3000);
+            addToast('error', 'Failed to delete resource.');
         } finally {
             setDeletingResource(null);
         }
@@ -177,13 +172,8 @@ export default function ResourcePage() {
     return (
         <div className="bg-base-200 min-h-screen py-10">
             {/* Toast Notifications */}
-            {showToast && (
-                <div className="toast toast-top toast-end">
-                    <div className={`alert ${showToast.type === 'success' ? 'alert-success' : 'alert-error'}`}>
-                        <span>{showToast.message}</span>
-                    </div>
-                </div>
-            )}
+            {/* The toast context will handle displaying toasts */}
+
             <div className="max-w-4xl mx-auto px-4 sm:px-6">
                 {/* Header Section */}
                 <div className="text-center mb-8">
@@ -195,8 +185,8 @@ export default function ResourcePage() {
                     </p>
                     {/* Debug info */}
                     <div className="mt-4 p-2 bg-base-200 rounded text-xs">
-                        <p>Current user: {userData?.displayName || user?.email?.split('@')[0] || 'Anonymous'}</p>
-                        <p>User email: {user?.email}</p>
+                        <p>Current user: {userData?.displayName || user?.displayName || 'Anonymous'}</p>
+                        <p>User displayName: {user?.displayName}</p>
                         <p>UserData displayName: {userData?.displayName}</p>
                     </div>
                 </div>
@@ -261,13 +251,13 @@ export default function ResourcePage() {
                                     </span>
                                 </label>
                                 {fileError && (
-                                    <div className="alert alert-error mt-2">
-                                        <span>{fileError}</span>
+                                    <div className="text-error text-sm mt-2">
+                                        {fileError}
                                     </div>
                                 )}
                                 {selectedFile && (
-                                    <div className="alert alert-info mt-2">
-                                        <span>Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)}MB)</span>
+                                    <div className="text-info text-sm mt-2">
+                                        Selected: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)}MB)
                                     </div>
                                 )}
                             </div>
@@ -306,7 +296,7 @@ export default function ResourcePage() {
                     ) : (
                         <div className="grid gap-4 sm:gap-6">
                             {resources.map(res => {
-                                const currentUser = userData?.displayName || user?.email?.split('@')[0] || 'Anonymous';
+                                const currentUser = userData?.displayName || user?.displayName || 'Anonymous';
                                 const canDelete = res.uploadedBy === currentUser;
 
                                 return (
