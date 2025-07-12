@@ -14,7 +14,7 @@ const navLinks = [
 ];
 
 export default function Header() {
-    const { user, logout } = useAuth();
+    const { user, userData, logout } = useAuth();
     const [menuOpen, setMenuOpen] = useState(false);
     const [isLoginOpen, setIsLoginOpen] = useState(false);
     const [isSignUpOpen, setIsSignUpOpen] = useState(false);
@@ -25,11 +25,11 @@ export default function Header() {
 
     return (
         <>
-            <header className=" bg-white shadow-sm fixed top-0 left-0 w-full z-40 backdrop-blur">
-                <div className="navbar  w-full px-6">
+            <header className="bg-base-100 shadow-sm fixed top-0 left-0 w-full z-40 backdrop-blur">
+                <div className="navbar w-full px-6">
                     {/* Branding */}
                     <div className="navbar-start">
-                        <a href="/" className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
+                        <a href="/" className="text-2xl font-semibold text-foreground flex items-center gap-2">
                             <span role="img" aria-label="logo" className="text-2xl">🌱</span>
                             <span>Untethered</span>
                         </a>
@@ -43,7 +43,7 @@ export default function Header() {
                                     <li key={link.href}>
                                         <a
                                             href={link.href}
-                                            className="text-gray-600 hover:text-blue-600 font-medium px-4 py-2 rounded-xl hover:bg-gray-50 transition-colors"
+                                            className="text-neutral hover:text-primary font-medium px-4 py-2 rounded-lg hover:bg-base-200 transition-colors focus:outline-none"
                                         >
                                             {link.label}
                                         </a>
@@ -59,25 +59,25 @@ export default function Header() {
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setIsSignUpOpen(true)}
-                                    className="btn btn-primary btn-sm rounded-xl"
+                                    className="btn btn-primary btn-sm rounded-lg focus:outline-none"
                                 >
-                                    Sign Up
+                                    Sign up
                                 </button>
                                 <button
                                     onClick={() => setIsLoginOpen(true)}
-                                    className="btn btn-outline btn-sm rounded-xl"
+                                    className="btn btn-outline btn-sm rounded-lg focus:outline-none"
                                 >
                                     Login
                                 </button>
                             </div>
                         ) : (
                             <div className="flex items-center gap-3">
-                                <span className="text-sm text-gray-500 hidden sm:inline">
-                                    Welcome, {user.email?.split('@')[0]}
+                                <span className="text-sm text-neutral hidden sm:inline">
+                                    Welcome, {userData?.displayName || user.email?.split('@')[0] || 'User'}
                                 </span>
                                 <button
                                     onClick={handleLogout}
-                                    className="btn btn-primary btn-sm rounded-xl"
+                                    className="btn btn-primary btn-sm rounded-lg focus:outline-none"
                                 >
                                     Logout
                                 </button>
@@ -89,10 +89,11 @@ export default function Header() {
                             <div className="lg:hidden">
                                 <button
                                     onClick={() => setMenuOpen(!menuOpen)}
-                                    className="btn btn-ghost btn-sm"
+                                    className="btn btn-ghost btn-sm rounded-lg focus:outline-none"
                                     aria-label="Toggle menu"
+                                    aria-expanded={menuOpen}
                                 >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24" aria-hidden="true">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 8h16M4 16h16" />
                                     </svg>
                                 </button>
@@ -109,7 +110,7 @@ export default function Header() {
                                 <li key={link.href}>
                                     <a
                                         href={link.href}
-                                        className="text-gray-600 hover:text-blue-600 font-medium px-4 py-3 rounded-xl hover:bg-gray-50 transition-colors"
+                                        className="text-neutral hover:text-primary font-medium px-4 py-3 rounded-lg hover:bg-base-200 transition-colors focus:outline-none"
                                         onClick={() => setMenuOpen(false)}
                                     >
                                         {link.label}

@@ -7,6 +7,32 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Design System Colors */
+  --color-primary: #3b82f6;
+  --color-primary-focus: #2563eb;
+  --color-primary-content: #ffffff;
+
+  --color-secondary: #64748b;
+  --color-secondary-focus: #475569;
+  --color-secondary-content: #ffffff;
+
+  --color-accent: #f59e0b;
+  --color-accent-focus: #d97706;
+  --color-accent-content: #ffffff;
+
+  --color-neutral: #6b7280;
+  --color-neutral-focus: #4b5563;
+  --color-neutral-content: #ffffff;
+
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafc;
+  --color-base-300: #e2e8f0;
+
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
 }
 
 @theme inline {
@@ -16,7 +42,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
@@ -27,4 +53,53 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Focus styles for accessibility */
+.btn:focus,
+.input:focus,
+.textarea:focus,
+.select:focus,
+.file-input:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--color-primary) !important;
+}
+
+/* Consistent border radius */
+.card,
+.modal-box {
+  border-radius: 1rem !important;
+}
+
+.btn {
+  border-radius: 0.5rem !important;
+}
+
+.input,
+.textarea,
+.select,
+.file-input {
+  border-radius: 0.5rem !important;
+}
+
+/* Form spacing */
+.form-control {
+  margin-bottom: 1rem;
+}
+
+.form-control .label {
+  margin-bottom: 0.5rem;
+}
+
+/* Modal improvements */
+.modal-box {
+  max-width: 32rem;
+  width: 90vw;
+}
+
+@media (max-width: 640px) {
+  .modal-box {
+    width: 95vw;
+    margin: 1rem;
+  }
 }

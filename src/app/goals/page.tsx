@@ -25,7 +25,9 @@ function getCurrentWeekNumberInMonth() {
     const first = new Date(today.getFullYear(), today.getMonth(), 1);
     const dayOfWeek = first.getDay();
     const day = today.getDate();
-    return Math.floor((day + dayOfWeek - 1) / 7);
+    // Calculate which week of the month we're in
+    // Week 1: days 1-7, Week 2: days 8-14, etc.
+    return Math.floor((day - 1) / 7);
 }
 
 export default function GoalsTracker() {
@@ -106,21 +108,21 @@ export default function GoalsTracker() {
     };
 
     return (
-        <div className="bg-gray-50 min-h-screen py-10">
+        <div className="bg-base-200 min-h-screen py-10">
             <div className="max-w-4xl mx-auto px-6">
                 <div className="card bg-base-100 shadow-md rounded-xl">
                     <div className="card-body p-6 md:p-10">
-                        <h1 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 text-center">
-                            Monthly Goal Tracker
+                        <h1 className="text-2xl md:text-3xl font-semibold text-foreground mb-6 text-center">
+                            Monthly goal tracker
                         </h1>
 
                         {/* User Selector */}
                         <div className="form-control mb-8">
                             <label className="label">
-                                <span className="label-text font-medium text-gray-700">Select Member:</span>
+                                <span className="label-text font-medium text-foreground">Select member:</span>
                             </label>
                             <select
-                                className="select select-bordered w-full max-w-xs"
+                                className="select select-bordered w-full max-w-xs focus:outline-none"
                                 value={selectedUid}
                                 onChange={e => setSelectedUid(e.target.value)}
                             >
@@ -131,7 +133,7 @@ export default function GoalsTracker() {
                         </div>
 
                         {loading ? (
-                            <div className="text-center text-gray-500 py-8">
+                            <div className="text-center text-neutral py-8">
                                 <span className="loading loading-spinner loading-md"></span>
                                 <p className="mt-2">Loading...</p>
                             </div>
@@ -140,17 +142,17 @@ export default function GoalsTracker() {
                                 {/* Monthly Goal */}
                                 <div className="card bg-base-100 shadow-sm border">
                                     <div className="card-body">
-                                        <h2 className="card-title text-lg font-semibold text-gray-800 mb-4">
-                                            Monthly Goal
+                                        <h2 className="card-title text-lg font-semibold text-foreground mb-4">
+                                            Monthly goal
                                         </h2>
                                         {userGoals?.monthlyGoal ? (
-                                            <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-gray-800">
+                                            <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 text-foreground">
                                                 {userGoals.monthlyGoal}
                                             </div>
                                         ) : selectedUid === user?.uid ? (
                                             <div className="space-y-4">
                                                 <input
-                                                    className="input input-bordered w-full"
+                                                    className="input input-bordered w-full focus:outline-none"
                                                     type="text"
                                                     placeholder="Enter your monthly goal..."
                                                     value={monthlyGoal}
@@ -160,32 +162,32 @@ export default function GoalsTracker() {
                                                 <button
                                                     onClick={handleSetMonthlyGoal}
                                                     disabled={addingMonthly || !monthlyGoal.trim()}
-                                                    className="btn btn-primary rounded-xl"
+                                                    className="btn btn-primary rounded-lg focus:outline-none"
                                                 >
                                                     {addingMonthly ? (
                                                         <>
                                                             <span className="loading loading-spinner loading-sm"></span>
-                                                            Setting Goal...
+                                                            Setting goal...
                                                         </>
                                                     ) : (
-                                                        'Set Goal'
+                                                        'Set goal'
                                                     )}
                                                 </button>
                                             </div>
                                         ) : (
-                                            <span className="italic text-gray-400">No goal set for this month.</span>
+                                            <span className="italic text-neutral">No goal set for this month.</span>
                                         )}
                                     </div>
                                 </div>
 
                                 {/* Weekly Tracker */}
                                 <div className="space-y-4">
-                                    <h2 className="text-lg font-semibold text-gray-800 mb-4">Weekly Progress</h2>
+                                    <h2 className="text-lg font-semibold text-foreground mb-4">Weekly progress</h2>
                                     {[0, 1, 2, 3].map(idx => (
-                                        <div key={idx} className="card bg-base-100 shadow-sm border-l-4 border-l-blue-500">
+                                        <div key={idx} className="card bg-base-100 shadow-sm border-l-4 border-l-primary">
                                             <div className="card-body">
                                                 <div className="flex items-center justify-between mb-3">
-                                                    <h3 className="font-semibold text-gray-800">
+                                                    <h3 className="font-semibold text-foreground">
                                                         Week {idx + 1}
                                                     </h3>
                                                     {idx === currentWeek && (
@@ -196,18 +198,18 @@ export default function GoalsTracker() {
                                                 {/* Main weekly goal */}
                                                 <div className="mb-3">
                                                     {userGoals?.weeklyGoals?.[idx]?.goal ? (
-                                                        <div className="text-gray-700 bg-gray-50 rounded-lg px-3 py-2">
+                                                        <div className="text-foreground bg-base-200 rounded-lg px-3 py-2">
                                                             {userGoals.weeklyGoals[idx].goal}
                                                         </div>
                                                     ) : (selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) ? (
                                                         <input
-                                                            className="input input-bordered w-full"
+                                                            className="input input-bordered w-full focus:outline-none"
                                                             value={weeklyGoalInputs[idx]}
                                                             onChange={e => handleGoalInputChange(idx, e.target.value)}
                                                             placeholder="Set your weekly goal…"
                                                         />
                                                     ) : (
-                                                        <span className="italic text-gray-400">No weekly goal set yet.</span>
+                                                        <span className="italic text-neutral">No weekly goal set yet.</span>
                                                     )}
                                                 </div>
 
@@ -215,15 +217,15 @@ export default function GoalsTracker() {
                                                 <div className="mb-3">
                                                     {(selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) ? (
                                                         <textarea
-                                                            className="textarea textarea-bordered w-full"
+                                                            className="textarea textarea-bordered w-full focus:outline-none"
                                                             value={weeklyNoteInputs[idx]}
                                                             onChange={e => handleNoteInputChange(idx, e.target.value)}
                                                             placeholder="Add or update your note for this week..."
                                                             rows={2}
                                                         />
                                                     ) : (
-                                                        <div className="text-gray-700 text-sm min-h-[32px] bg-gray-50 rounded-lg px-3 py-2">
-                                                            {userGoals?.weeklyGoals?.[idx]?.note || <span className="italic text-gray-400">No notes yet.</span>}
+                                                        <div className="text-foreground text-sm min-h-[32px] bg-base-200 rounded-lg px-3 py-2">
+                                                            {userGoals?.weeklyGoals?.[idx]?.note || <span className="italic text-neutral">No notes yet.</span>}
                                                         </div>
                                                     )}
                                                 </div>
@@ -233,7 +235,7 @@ export default function GoalsTracker() {
                                                     <button
                                                         onClick={() => handleSaveWeek(idx)}
                                                         disabled={savingWeek === idx || (!weeklyGoalInputs[idx] && !weeklyNoteInputs[idx])}
-                                                        className="btn btn-primary btn-sm rounded-xl"
+                                                        className="btn btn-primary btn-sm rounded-lg focus:outline-none"
                                                     >
                                                         {savingWeek === idx ? (
                                                             <>
@@ -241,7 +243,7 @@ export default function GoalsTracker() {
                                                                 Saving...
                                                             </>
                                                         ) : (
-                                                            'Save Week'
+                                                            'Save week'
                                                         )}
                                                     </button>
                                                 )}

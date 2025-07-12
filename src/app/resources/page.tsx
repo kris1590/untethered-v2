@@ -21,7 +21,7 @@ type Resource = {
 };
 
 export default function ResourcePage() {
-    const { user } = useAuth();
+    const { user, userData } = useAuth();
     const [resources, setResources] = useState<Resource[]>([]);
     const [form, setForm] = useState({ topic: '', description: '', link: '' });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -60,7 +60,7 @@ export default function ResourcePage() {
             return;
         }
 
-        const uploadedBy = user?.displayName || user?.email?.split('@')[0] || 'Anonymous';
+        const uploadedBy = userData?.displayName || user?.email?.split('@')[0] || 'Anonymous';
         setLoading(true);
         try {
             let fileUrl = '';
@@ -142,7 +142,7 @@ export default function ResourcePage() {
 
     const handleDeleteResource = async (resource: Resource) => {
         if (!resource.id || !user) return;
-        const currentUser = user?.displayName || user?.email?.split('@')[0] || 'Anonymous';
+        const currentUser = userData?.displayName || user?.email?.split('@')[0] || 'Anonymous';
         if (resource.uploadedBy !== currentUser) {
             setShowToast({ type: 'error', message: 'You can only delete resources you uploaded.' });
             setTimeout(() => setShowToast(null), 3000);
@@ -173,7 +173,7 @@ export default function ResourcePage() {
     const toggleExpand = (id: string) => setExpandedResource(isExpanded(id) ? null : id);
 
     return (
-        <div className="bg-gray-50 min-h-screen py-10">
+        <div className="bg-base-200 min-h-screen py-10">
             {/* Toast Notifications */}
             {showToast && (
                 <div className="toast toast-top toast-end">
@@ -185,26 +185,26 @@ export default function ResourcePage() {
             <div className="max-w-4xl mx-auto px-4 sm:px-6">
                 {/* Header Section */}
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-semibold text-gray-800 mb-3">
-                        Resource Library
+                    <h1 className="text-3xl font-semibold text-foreground mb-3">
+                        Resource library
                     </h1>
-                    <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+                    <p className="text-lg text-neutral max-w-2xl mx-auto">
                         Share and discover valuable resources: articles, videos, PDFs and more.
                     </p>
                 </div>
                 {/* Upload Form */}
                 <div className="card bg-base-100 shadow-md rounded-xl mb-6">
                     <div className="card-body p-4 sm:p-8">
-                        <h2 className="card-title text-xl font-semibold text-gray-800 mb-4">
-                            Add New Resource
+                        <h2 className="card-title text-xl font-semibold text-foreground mb-4">
+                            Add new resource
                         </h2>
-                        <form onSubmit={handleSubmit} className="grid gap-4">
+                        <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text font-medium text-gray-700">Topic</span>
+                                    <span className="label-text font-medium text-foreground">Topic</span>
                                 </label>
                                 <input
-                                    className="input input-bordered w-full text-black focus:outline-none"
+                                    className="input input-bordered w-full focus:outline-none"
                                     placeholder="Resource topic"
                                     value={form.topic}
                                     onChange={(e) => setForm({ ...form, topic: e.target.value })}
@@ -213,10 +213,10 @@ export default function ResourcePage() {
                             </div>
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text font-medium text-gray-700">Description</span>
+                                    <span className="label-text font-medium text-foreground">Description</span>
                                 </label>
                                 <textarea
-                                    className="textarea textarea-bordered w-full text-black focus:outline-none"
+                                    className="textarea textarea-bordered w-full focus:outline-none"
                                     placeholder="Brief description"
                                     value={form.description}
                                     onChange={(e) =>
@@ -227,10 +227,10 @@ export default function ResourcePage() {
                             </div>
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text font-medium text-gray-700">Resource Link (or upload a file below)</span>
+                                    <span className="label-text font-medium text-foreground">Resource link (or upload a file below)</span>
                                 </label>
                                 <input
-                                    className="input input-bordered w-full text-black focus:outline-none"
+                                    className="input input-bordered w-full focus:outline-none"
                                     placeholder="https://resource-link.com"
                                     type="url"
                                     value={form.link}
@@ -239,16 +239,16 @@ export default function ResourcePage() {
                             </div>
                             <div className="form-control">
                                 <label className="label">
-                                    <span className="label-text font-medium text-gray-700">Upload File (optional)</span>
+                                    <span className="label-text font-medium text-foreground">Upload file (optional)</span>
                                 </label>
                                 <input
                                     type="file"
-                                    className="file-input file-input-bordered w-full"
+                                    className="file-input file-input-bordered w-full focus:outline-none"
                                     accept="image/*,video/*,.pdf"
                                     onChange={handleFileChange}
                                 />
                                 <label className="label">
-                                    <span className="label-text-alt text-gray-500">
+                                    <span className="label-text-alt text-neutral">
                                         Max 5MB • Images, Videos, PDFs
                                     </span>
                                 </label>
@@ -265,7 +265,7 @@ export default function ResourcePage() {
                             </div>
                             <div className="flex justify-end">
                                 <button
-                                    className="btn btn-primary w-full sm:w-auto"
+                                    className="btn btn-primary w-full sm:w-auto rounded-lg focus:outline-none"
                                     type="submit"
                                     disabled={loading}
                                 >
@@ -275,7 +275,7 @@ export default function ResourcePage() {
                                             Uploading...
                                         </>
                                     ) : (
-                                        'Upload Resource'
+                                        'Upload resource'
                                     )}
                                 </button>
                             </div>
@@ -285,13 +285,13 @@ export default function ResourcePage() {
 
                 {/* --- MOBILE FRIENDLY CARD LAYOUT --- */}
                 <div>
-                    <h2 className="text-xl font-semibold text-gray-800 mb-4">Shared Resources</h2>
+                    <h2 className="text-xl font-semibold text-foreground mb-4">Shared resources</h2>
                     {fetching ? (
                         <div className="flex justify-center py-12">
                             <span className="loading loading-spinner loading-lg"></span>
                         </div>
                     ) : resources.length === 0 ? (
-                        <div className="text-center py-8 text-gray-400">
+                        <div className="text-center py-8 text-neutral">
                             <div className="text-5xl mb-2">📚</div>
                             <div>No resources yet</div>
                         </div>
@@ -303,14 +303,14 @@ export default function ResourcePage() {
                                     <div key={res.id || res.link} className="card shadow-sm bg-base-100 rounded-xl p-4 sm:p-6 flex flex-col">
                                         <div className="flex items-start justify-between gap-2">
                                             <div>
-                                                <h3 className="text-lg font-semibold text-gray-800">{res.topic}</h3>
-                                                <div className="text-sm text-gray-500 mb-1">by {res.uploadedBy} · {res.createdAt && res.createdAt.toDate().toLocaleDateString()}</div>
+                                                <h3 className="text-lg font-semibold text-foreground">{res.topic}</h3>
+                                                <div className="text-sm text-neutral mb-1">by {res.uploadedBy} · {res.createdAt && res.createdAt.toDate().toLocaleDateString()}</div>
                                             </div>
                                             {canDelete && (
                                                 <button
                                                     onClick={() => handleDeleteResource(res)}
                                                     disabled={deletingResource === res.id}
-                                                    className="btn btn-error btn-xs"
+                                                    className="btn btn-error btn-xs rounded-lg focus:outline-none"
                                                     title="Delete this resource"
                                                 >
                                                     {deletingResource === res.id ? (
@@ -321,14 +321,14 @@ export default function ResourcePage() {
                                                 </button>
                                             )}
                                         </div>
-                                        <div className="mt-2 text-gray-700 text-sm whitespace-pre-line">
+                                        <div className="mt-2 text-neutral text-sm whitespace-pre-line">
                                             {res.description && (res.description.length > 110 && !isExpanded(res.id!))
                                                 ? (
                                                     <>
                                                         {res.description.slice(0, 110)}...
                                                         <button
                                                             onClick={() => toggleExpand(res.id!)}
-                                                            className="btn btn-link btn-xs ml-1 px-0 align-baseline"
+                                                            className="btn btn-link btn-xs ml-1 px-0 align-baseline focus:outline-none"
                                                         >
                                                             Read more
                                                         </button>
@@ -339,7 +339,7 @@ export default function ResourcePage() {
                                                         {res.description && res.description.length > 110 &&
                                                             <button
                                                                 onClick={() => toggleExpand(res.id!)}
-                                                                className="btn btn-link btn-xs ml-1 px-0 align-baseline"
+                                                                className="btn btn-link btn-xs ml-1 px-0 align-baseline focus:outline-none"
                                                             >
                                                                 Show less
                                                             </button>
@@ -353,9 +353,9 @@ export default function ResourcePage() {
                                                     href={formatUrl(res.link)}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="btn btn-primary btn-xs"
+                                                    className="btn btn-primary btn-xs rounded-lg focus:outline-none"
                                                 >
-                                                    🔗 Resource Link
+                                                    🔗 Resource link
                                                 </a>
                                             )}
                                             {res.fileUrl && (
@@ -363,7 +363,7 @@ export default function ResourcePage() {
                                                     href={res.fileUrl}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="btn btn-secondary btn-xs"
+                                                    className="btn btn-secondary btn-xs rounded-lg focus:outline-none"
                                                 >
                                                     {res.fileType?.startsWith('image/') ? '📷 Image' :
                                                         res.fileType?.startsWith('video/') ? '🎥 Video' :

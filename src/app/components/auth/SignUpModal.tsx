@@ -70,90 +70,95 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
 
     return (
         <dialog className="modal modal-open">
-            <div className="modal-box max-w-md bg-white shadow-xl">
+            <div className="modal-box max-w-md bg-base-100 shadow-xl rounded-xl">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-semibold text-gray-800">Sign Up</h2>
+                    <h2 className="text-2xl font-semibold text-foreground">Sign up</h2>
                     <button
                         onClick={onClose}
-                        className="btn btn-ghost btn-sm btn-circle"
+                        className="btn btn-ghost btn-sm btn-circle focus:outline-none"
+                        aria-label="Close modal"
                     >
                         ✕
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text font-medium text-gray-700">Display Name *</span>
+                            <span className="label-text font-medium text-foreground">Display name *</span>
                         </label>
                         <input
                             type="text"
                             value={displayName}
                             onChange={(e) => setDisplayName(e.target.value)}
-                            className="input w-full border-2 border-black placeholder-gray-500 bg-white"
+                            className="input input-bordered w-full focus:outline-none"
                             placeholder="Enter your full name"
                             required
+                            aria-describedby="displayname-error"
                         />
                     </div>
 
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text font-medium text-gray-700">Email *</span>
+                            <span className="label-text font-medium text-foreground">Email *</span>
                         </label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="input w-full border-2 border-black placeholder-gray-500 bg-white"
-                            placeholder="Enter your email"
+                            className="input input-bordered w-full focus:outline-none"
+                            placeholder="Enter your email address"
                             required
+                            aria-describedby="email-error"
                         />
                     </div>
 
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text font-medium text-gray-700">Phone Number</span>
+                            <span className="label-text font-medium text-foreground">Phone number</span>
                         </label>
                         <input
                             type="tel"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="input w-full border-2 border-black placeholder-gray-500 bg-white"
+                            className="input input-bordered w-full focus:outline-none"
                             placeholder="Enter your phone number (optional)"
                         />
                     </div>
 
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text font-medium text-gray-700">Password *</span>
+                            <span className="label-text font-medium text-foreground">Password *</span>
                         </label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="input w-full border-2 border-black placeholder-gray-500 bg-white"
+                            className="input input-bordered w-full focus:outline-none"
                             placeholder="Enter your password"
                             required
+                            aria-describedby="password-error"
                         />
                     </div>
 
                     <div className="form-control">
                         <label className="label">
-                            <span className="label-text font-medium text-gray-700">Confirm Password *</span>
+                            <span className="label-text font-medium text-foreground">Confirm password *</span>
                         </label>
                         <input
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="input w-full border-2 border-black placeholder-gray-500 bg-white"
+                            className="input input-bordered w-full focus:outline-none"
                             placeholder="Confirm your password"
                             required
+                            aria-describedby="confirmpassword-error"
                         />
                     </div>
 
                     {error && (
                         <div className="alert alert-error">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <span>{error}</span>
@@ -163,7 +168,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
                     <button
                         type="submit"
                         disabled={loading}
-                        className="btn btn-primary w-full rounded-xl"
+                        className="btn btn-primary w-full rounded-lg focus:outline-none"
                     >
                         {loading ? (
                             <>
@@ -171,18 +176,18 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
                                 Creating account...
                             </>
                         ) : (
-                            'Sign Up'
+                            'Sign up'
                         )}
                     </button>
                 </form>
 
                 <div className="modal-action">
                     <div className="text-center w-full">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-neutral">
                             Already have an account?{' '}
                             <button
                                 onClick={onSwitchToLogin}
-                                className="link link-primary font-medium"
+                                className="link link-primary font-medium focus:outline-none"
                             >
                                 Login
                             </button>
@@ -191,7 +196,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
                 </div>
             </div>
             <form method="dialog" className="modal-backdrop">
-                <button onClick={onClose}>close</button>
+                <button onClick={onClose} className="sr-only">close</button>
             </form>
         </dialog>
     );
