@@ -9,30 +9,43 @@ export function Hero() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState(false);
   const { user } = useAuth();
+
   return (
-    <section id="relume" className="px-[5%] py-16 md:py-24 lg:py-28">
-      <div className="container">
-        <div className="grid grid-cols-1 gap-x-20 gap-y-12 md:gap-y-16 lg:grid-cols-2 lg:items-center">
-          <div>
-            <h1 className="mb-5 text-4xl font-bold md:mb-6 md:text-6xl lg:text-8xl">
-              Empower Your Team, Achieve Your Goals
+    <section className="bg-slate-50 dark:bg-slate-900 py-12 md:py-20 h-screen">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex flex-col-reverse lg:flex-row items-center gap-10">
+          {/* Left - Text */}
+          <div className="w-full lg:w-1/2 text-center lg:text-left">
+            <h1 className="mb-4 text-4xl md:text-5xl lg:text-6xl font-extrabold text-primary dark:text-accent leading-tight tracking-tight">
+              Empower Your Team,<br /> Elevate Your Brotherhood
             </h1>
-            <p className="md:text-md">
-              Welcome to our platform, where collaboration meets productivity.
-              Join us in transforming how your team connects and grows together.
+            <p className="text-lg md:text-xl text-slate-700 dark:text-slate-300 max-w-xl mx-auto lg:mx-0">
+              Welcome to Untethered, a place where connection meets growth.<br />
+              Join a community built on trust, honesty, and purpose—where every member helps shape the culture.
             </p>
-            {!user ? (
-              <div className="mt-6 flex flex-wrap gap-4 md:mt-8">
-                <button onClick={() => setIsLoginOpen(true)} className="btn btn-primary">Sign In</button>
-                <button onClick={() => setIsSignUpOpen(true)} className="btn btn-primary">Sign Up</button>
+            {!user && (
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <button
+                  onClick={() => setIsLoginOpen(true)}
+                  className="px-8 py-3 rounded-full bg-accent text-primary font-semibold shadow hover:shadow-md transition"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setIsSignUpOpen(true)}
+                  className="px-8 py-3 rounded-full border border-accent text-accent font-semibold bg-white dark:bg-slate-800 hover:bg-accent/10 transition"
+                >
+                  Sign Up
+                </button>
               </div>
-            ) : null}
+            )}
           </div>
-          <div>
+          {/* Right - Image */}
+          <div className="w-full lg:w-1/2 flex justify-center">
             <img
               src="https://d22po4pjz3o32e.cloudfront.net/placeholder-image.svg"
-              className="w-full rounded-image object-cover"
-              alt="Relume placeholder image"
+              alt="Untethered community"
+              className="w-full max-w-md rounded-2xl shadow-lg object-cover bg-slate-100 dark:bg-slate-800"
             />
           </div>
         </div>
