@@ -15,6 +15,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,6 +27,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
             onClose();
             setEmail('');
             setPassword('');
+            setRememberMe(false);
         } catch (error: any) {
             setError(error.message);
         } finally {
@@ -36,80 +38,101 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
     if (!isOpen) return null;
 
     return (
-        <div
-            className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
-            onClick={onClose}
-        >
-            <div
-                className="bg-slate-800 dark:bg-slate-900 rounded-lg p-8 w-full max-w-md border border-slate-700"
-                onClick={e => e.stopPropagation()}
-            >
+        <dialog className="modal modal-open">
+            <div className="modal-box max-w-md bg-white shadow-xl">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-white">Login</h2>
+                    <h2 className="text-2xl font-semibold text-gray-800">Login</h2>
                     <button
                         onClick={onClose}
-                        className="text-slate-400 hover:text-white transition-colors"
+                        className="btn btn-ghost btn-sm btn-circle"
                     >
                         ✕
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-slate-200 mb-1">
-                            Email
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text font-medium text-gray-700">Email</span>
                         </label>
                         <input
                             type="email"
-                            id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-700 text-white placeholder-slate-400"
+                            className="input w-full border-2 border-black placeholder-gray-500 bg-white"
                             placeholder="Enter your email"
                             required
                         />
                     </div>
 
-                    <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-slate-200 mb-1">
-                            Password
+                    <div className="form-control">
+                        <label className="label">
+                            <span className="label-text font-medium text-gray-700">Password</span>
                         </label>
                         <input
                             type="password"
-                            id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-700 text-white placeholder-slate-400"
+                            className="input w-full border-2 border-black placeholder-gray-500 bg-white"
                             placeholder="Enter your password"
                             required
                         />
                     </div>
 
+                    <div className="form-control">
+                        <label className="label cursor-pointer justify-start gap-2">
+                            <input
+                                type="checkbox"
+                                className="checkbox checkbox-sm border-2 border-black"
+                                checked={rememberMe}
+                                onChange={(e) => setRememberMe(e.target.checked)}
+                            />
+                            <span className="label-text text-gray-700">Remember me</span>
+                        </label>
+                    </div>
+
                     {error && (
-                        <div className="text-red-400 text-sm bg-red-900/20 border border-red-800 rounded-md p-3">{error}</div>
+                        <div className="alert alert-error">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span>{error}</span>
+                        </div>
                     )}
 
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors"
+                        className="btn btn-primary w-full rounded-xl"
                     >
-                        {loading ? 'Logging in...' : 'Login'}
+                        {loading ? (
+                            <>
+                                <span className="loading loading-spinner loading-sm"></span>
+                                Logging in...
+                            </>
+                        ) : (
+                            'Login'
+                        )}
                     </button>
                 </form>
 
-                <div className="mt-4 text-center">
-                    <p className="text-sm text-slate-400">
-                        Don't have an account?{' '}
-                        <button
-                            onClick={onSwitchToSignUp}
-                            className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
-                        >
-                            Sign up
-                        </button>
-                    </p>
+                <div className="modal-action">
+                    <div className="text-center w-full">
+                        <p className="text-sm text-gray-500">
+                            Don't have an account?{' '}
+                            <button
+                                onClick={onSwitchToSignUp}
+                                className="link link-primary font-medium"
+                            >
+                                Sign up
+                            </button>
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
+            <form method="dialog" className="modal-backdrop">
+                <button onClick={onClose}>close</button>
+            </form>
+        </dialog>
     );
 } 

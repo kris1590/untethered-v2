@@ -106,114 +106,153 @@ export default function GoalsTracker() {
     };
 
     return (
-        <div className="bg-slate-50 dark:bg-slate-900 min-h-screen py-10">
-            <div className="max-w-2xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow p-6 md:p-10">
-                <h1 className="text-2xl md:text-3xl font-bold text-primary dark:text-accent mb-6 text-center">
-                    Monthly Goal Tracker
-                </h1>
-                {/* User Selector */}
-                <div className="mb-8 flex flex-col sm:flex-row gap-3 items-center">
-                    <label className="font-medium text-slate-700 dark:text-slate-200">Select Member:</label>
-                    <select
-                        className="border rounded-md p-2 dark:bg-slate-900"
-                        value={selectedUid}
-                        onChange={e => setSelectedUid(e.target.value)}
-                    >
-                        {users.map(u => (
-                            <option key={u.uid} value={u.uid}>{u.displayName || u.email}</option>
-                        ))}
-                    </select>
-                </div>
-                {loading ? (
-                    <div className="text-center text-slate-400">Loading...</div>
-                ) : (
-                    <div>
-                        {/* Monthly Goal */}
-                        <div className="mb-4 font-bold text-lg text-slate-800 dark:text-slate-100">
-                            Goal:
+        <div className="bg-gray-50 min-h-screen py-10">
+            <div className="max-w-4xl mx-auto px-6">
+                <div className="card bg-base-100 shadow-md rounded-xl">
+                    <div className="card-body p-6 md:p-10">
+                        <h1 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-6 text-center">
+                            Monthly Goal Tracker
+                        </h1>
+
+                        {/* User Selector */}
+                        <div className="form-control mb-8">
+                            <label className="label">
+                                <span className="label-text font-medium text-gray-700">Select Member:</span>
+                            </label>
+                            <select
+                                className="select select-bordered w-full max-w-xs"
+                                value={selectedUid}
+                                onChange={e => setSelectedUid(e.target.value)}
+                            >
+                                {users.map(u => (
+                                    <option key={u.uid} value={u.uid}>{u.displayName || u.email}</option>
+                                ))}
+                            </select>
                         </div>
-                        <div className="mb-6">
-                            {userGoals?.monthlyGoal ? (
-                                <div className="bg-accent/20 rounded-md px-4 py-2 text-slate-800 dark:text-slate-200">
-                                    {userGoals.monthlyGoal}
-                                </div>
-                            ) : selectedUid === user?.uid ? (
-                                <div>
-                                    <input
-                                        className="border rounded-md w-full p-2 mb-2 dark:bg-slate-900"
-                                        type="text"
-                                        placeholder="Enter your monthly goal..."
-                                        value={monthlyGoal}
-                                        onChange={e => setMonthlyGoalText(e.target.value)}
-                                        disabled={addingMonthly}
-                                    />
-                                    <button
-                                        onClick={handleSetMonthlyGoal}
-                                        disabled={addingMonthly || !monthlyGoal.trim()}
-                                        className="px-5 py-2 rounded-full font-semibold bg-accent text-primary hover:bg-accent/80 shadow transition w-full"
-                                    >
-                                        Set Goal
-                                    </button>
-                                </div>
-                            ) : (
-                                <span className="italic text-slate-400">No goal set for this month.</span>
-                            )}
-                        </div>
-                        {/* Weekly Tracker */}
-                        <div>
-                            {[0, 1, 2, 3].map(idx => (
-                                <div key={idx} className="mb-6 border-l-4 border-accent pl-4 py-2 bg-slate-50 dark:bg-slate-900 rounded">
-                                    <div className="font-semibold text-primary dark:text-accent mb-1">
-                                        Week {idx + 1}
-                                    </div>
-                                    {/* Main weekly goal */}
-                                    <div className="mb-2">
-                                        {userGoals?.weeklyGoals?.[idx]?.goal ? (
-                                            <div className="text-slate-700 dark:text-slate-200">
-                                                {userGoals.weeklyGoals[idx].goal}
+
+                        {loading ? (
+                            <div className="text-center text-gray-500 py-8">
+                                <span className="loading loading-spinner loading-md"></span>
+                                <p className="mt-2">Loading...</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-6">
+                                {/* Monthly Goal */}
+                                <div className="card bg-base-100 shadow-sm border">
+                                    <div className="card-body">
+                                        <h2 className="card-title text-lg font-semibold text-gray-800 mb-4">
+                                            Monthly Goal
+                                        </h2>
+                                        {userGoals?.monthlyGoal ? (
+                                            <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-gray-800">
+                                                {userGoals.monthlyGoal}
                                             </div>
-                                        ) : (selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) ? (
-                                            <input
-                                                className="w-full border rounded-md p-2 dark:bg-slate-800"
-                                                value={weeklyGoalInputs[idx]}
-                                                onChange={e => handleGoalInputChange(idx, e.target.value)}
-                                                placeholder="Set your weekly goal…"
-                                            />
+                                        ) : selectedUid === user?.uid ? (
+                                            <div className="space-y-4">
+                                                <input
+                                                    className="input input-bordered w-full"
+                                                    type="text"
+                                                    placeholder="Enter your monthly goal..."
+                                                    value={monthlyGoal}
+                                                    onChange={e => setMonthlyGoalText(e.target.value)}
+                                                    disabled={addingMonthly}
+                                                />
+                                                <button
+                                                    onClick={handleSetMonthlyGoal}
+                                                    disabled={addingMonthly || !monthlyGoal.trim()}
+                                                    className="btn btn-primary rounded-xl"
+                                                >
+                                                    {addingMonthly ? (
+                                                        <>
+                                                            <span className="loading loading-spinner loading-sm"></span>
+                                                            Setting Goal...
+                                                        </>
+                                                    ) : (
+                                                        'Set Goal'
+                                                    )}
+                                                </button>
+                                            </div>
                                         ) : (
-                                            <span className="italic text-slate-400">No weekly goal set yet.</span>
+                                            <span className="italic text-gray-400">No goal set for this month.</span>
                                         )}
                                     </div>
-                                    {/* Additional note */}
-                                    <div>
-                                        {(selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) ? (
-                                            <textarea
-                                                className="w-full border rounded-md p-2 dark:bg-slate-800"
-                                                value={weeklyNoteInputs[idx]}
-                                                onChange={e => handleNoteInputChange(idx, e.target.value)}
-                                                placeholder="Add or update your note for this week..."
-                                                rows={2}
-                                            />
-                                        ) : (
-                                            <div className="text-slate-700 dark:text-slate-300 text-sm min-h-[32px]">
-                                                {userGoals?.weeklyGoals?.[idx]?.note || <span className="italic text-slate-400">No notes yet.</span>}
-                                            </div>
-                                        )}
-                                    </div>
-                                    {/* Save Button */}
-                                    {(selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) && (
-                                        <button
-                                            onClick={() => handleSaveWeek(idx)}
-                                            disabled={savingWeek === idx || (!weeklyGoalInputs[idx] && !weeklyNoteInputs[idx])}
-                                            className="mt-2 px-4 py-2 rounded-full bg-accent text-primary font-semibold hover:bg-accent/80 shadow transition"
-                                        >
-                                            {savingWeek === idx ? "Saving..." : "Save Week"}
-                                        </button>
-                                    )}
                                 </div>
-                            ))}
-                        </div>
+
+                                {/* Weekly Tracker */}
+                                <div className="space-y-4">
+                                    <h2 className="text-lg font-semibold text-gray-800 mb-4">Weekly Progress</h2>
+                                    {[0, 1, 2, 3].map(idx => (
+                                        <div key={idx} className="card bg-base-100 shadow-sm border-l-4 border-l-blue-500">
+                                            <div className="card-body">
+                                                <div className="flex items-center justify-between mb-3">
+                                                    <h3 className="font-semibold text-gray-800">
+                                                        Week {idx + 1}
+                                                    </h3>
+                                                    {idx === currentWeek && (
+                                                        <span className="badge badge-primary badge-sm">Current</span>
+                                                    )}
+                                                </div>
+
+                                                {/* Main weekly goal */}
+                                                <div className="mb-3">
+                                                    {userGoals?.weeklyGoals?.[idx]?.goal ? (
+                                                        <div className="text-gray-700 bg-gray-50 rounded-lg px-3 py-2">
+                                                            {userGoals.weeklyGoals[idx].goal}
+                                                        </div>
+                                                    ) : (selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) ? (
+                                                        <input
+                                                            className="input input-bordered w-full"
+                                                            value={weeklyGoalInputs[idx]}
+                                                            onChange={e => handleGoalInputChange(idx, e.target.value)}
+                                                            placeholder="Set your weekly goal…"
+                                                        />
+                                                    ) : (
+                                                        <span className="italic text-gray-400">No weekly goal set yet.</span>
+                                                    )}
+                                                </div>
+
+                                                {/* Additional note */}
+                                                <div className="mb-3">
+                                                    {(selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) ? (
+                                                        <textarea
+                                                            className="textarea textarea-bordered w-full"
+                                                            value={weeklyNoteInputs[idx]}
+                                                            onChange={e => handleNoteInputChange(idx, e.target.value)}
+                                                            placeholder="Add or update your note for this week..."
+                                                            rows={2}
+                                                        />
+                                                    ) : (
+                                                        <div className="text-gray-700 text-sm min-h-[32px] bg-gray-50 rounded-lg px-3 py-2">
+                                                            {userGoals?.weeklyGoals?.[idx]?.note || <span className="italic text-gray-400">No notes yet.</span>}
+                                                        </div>
+                                                    )}
+                                                </div>
+
+                                                {/* Save Button */}
+                                                {(selectedUid === user?.uid && idx === currentWeek && userGoals?.monthlyGoal) && (
+                                                    <button
+                                                        onClick={() => handleSaveWeek(idx)}
+                                                        disabled={savingWeek === idx || (!weeklyGoalInputs[idx] && !weeklyNoteInputs[idx])}
+                                                        className="btn btn-primary btn-sm rounded-xl"
+                                                    >
+                                                        {savingWeek === idx ? (
+                                                            <>
+                                                                <span className="loading loading-spinner loading-xs"></span>
+                                                                Saving...
+                                                            </>
+                                                        ) : (
+                                                            'Save Week'
+                                                        )}
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
             </div>
         </div>
     );

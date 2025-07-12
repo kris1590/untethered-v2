@@ -6,8 +6,8 @@ const commitments = [
         title: 'Attend Regularly',
         subtitle: 'Be here. That is the work.',
         details: [
-            <span key="ceiling"><strong>Ceiling:</strong> Aim to attend every live weekly call unless genuinely prevented otherwise. Your presence is your biggest investment and the group’s greatest gift.</span>,
-            <span key="floor"><strong>Floor:</strong> You must attend at least 2 out of 4 calls each month to remain an active member (50%). If that’s not sustainable, you’ll be asked to step away until you have the bandwidth. Our intimacy and trust depend on a reliable presence.</span>,
+            <span key="ceiling"><strong>Ceiling:</strong> Aim to attend every live weekly call unless genuinely prevented otherwise. Your presence is your biggest investment and the group\'s greatest gift.</span>,
+            <span key="floor"><strong>Floor:</strong> You must attend at least 2 out of 4 calls each month to remain an active member (50%). If that\'s not sustainable, you\'ll be asked to step away until you have the bandwidth. Our intimacy and trust depend on a reliable presence.</span>,
             <span key="miss">If you will miss a call, let us know in advance and stay plugged in. Drop an update or share reflections in the WhatsApp chat so the connection stays alive.</span>
         ],
         color: "bg-blue-500"
@@ -61,42 +61,45 @@ const commitments = [
 
 export default function Commitments() {
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8 md:py-16">
-            <div className="max-w-2xl mx-auto px-4">
-                <header className="mb-10 text-center">
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-primary dark:text-accent mb-2">
+        <div className="bg-gray-50 min-h-screen py-10">
+            <div className="max-w-4xl mx-auto px-6">
+                <div className="text-center mb-10">
+                    <h1 className="text-3xl md:text-4xl font-semibold text-gray-800 mb-4">
                         Our Commitments
                     </h1>
-                    <p className="text-base md:text-lg text-slate-600 dark:text-slate-300">
+                    <p className="text-lg text-gray-500 max-w-2xl mx-auto">
                         The foundation of trust and connection that binds our brotherhood together.
                     </p>
-                </header>
+                </div>
 
-                <section className="flex flex-col gap-6">
+                <div className="space-y-6">
                     {commitments.map((c) => (
-                        <div
-                            key={c.num}
-                            className="flex gap-4 items-start bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm"
-                        >
-                            <div className={`w-10 h-10 ${c.color} rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0 mt-1`}>
-                                {c.num}
-                            </div>
-                            <div>
-                                <div className="font-semibold text-slate-800 dark:text-slate-100 text-lg mb-1">
-                                    {c.title}
-                                    <span className="block text-sm font-normal text-slate-500 dark:text-slate-400">
-                                        {c.subtitle}
-                                    </span>
-                                </div>
-                                <div className="space-y-3 text-slate-700 dark:text-slate-300 text-sm md:text-base mt-2">
-                                    {c.details.map((d, i) => (
-                                        <div key={i}>{d}</div>
-                                    ))}
+                        <div key={c.num} className="card bg-base-100 shadow-md rounded-xl">
+                            <div className="card-body p-6 md:p-8">
+                                <div className="flex gap-6 items-start">
+                                    <div className={`w-12 h-12 ${c.color} rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0`}>
+                                        {c.num}
+                                    </div>
+                                    <div className="flex-1 space-y-4">
+                                        <div>
+                                            <h2 className="text-xl font-semibold text-gray-800 mb-1">
+                                                {c.title}
+                                            </h2>
+                                            <p className="text-gray-500 font-medium">
+                                                {c.subtitle}
+                                            </p>
+                                        </div>
+                                        <div className="space-y-3 text-gray-700 leading-relaxed">
+                                            {c.details.map((d, i) => (
+                                                <div key={i} className="text-sm md:text-base">{d}</div>
+                                            ))}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     ))}
-                </section>
+                </div>
             </div>
         </div>
     );

@@ -40,63 +40,71 @@ const values = [
 
 export default function TeamCulture() {
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-8 md:py-16">
-            <div className="max-w-2xl mx-auto px-4">
-                <header className="mb-10 text-center">
-                    <h1 className="text-3xl md:text-4xl font-extrabold text-primary dark:text-accent mb-2">
+        <div className="bg-gray-50 min-h-screen py-10">
+            <div className="max-w-4xl mx-auto px-6">
+                <div className="text-center mb-10">
+                    <h1 className="text-3xl md:text-4xl font-semibold text-gray-800 mb-4">
                         Team Culture
                     </h1>
-                    <p className="text-base md:text-lg text-slate-600 dark:text-slate-300">
+                    <p className="text-lg text-gray-500 max-w-2xl mx-auto">
                         The principles that ground us and guide us forward.
                     </p>
-                </header>
+                </div>
 
-                {/* Vision */}
-                <section className="mb-8">
-                    <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">
-                        Vision
-                    </h2>
-                    <div className="bg-white dark:bg-slate-800 rounded-xl p-5 text-slate-700 dark:text-slate-300">
-                        The Untethered is about the pursuit of freedom: freedom from self-limiting beliefs,
-                        approval seeking, and the patterns in our life that have held us back from stepping into our full potential.
+                <div className="space-y-8">
+                    {/* Vision */}
+                    <div className="card bg-base-100 shadow-md rounded-xl">
+                        <div className="card-body p-6 md:p-8">
+                            <h2 className="card-title text-xl font-semibold text-gray-800 mb-4">
+                                Vision
+                            </h2>
+                            <p className="text-gray-700 leading-relaxed">
+                                The Untethered is about the pursuit of freedom: freedom from self-limiting beliefs,
+                                approval seeking, and the patterns in our life that have held us back from stepping into our full potential.
+                            </p>
+                        </div>
                     </div>
-                </section>
 
-                {/* Purpose */}
-                <section className="mb-8">
-                    <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">
-                        Purpose
-                    </h2>
-                    <div className="bg-white dark:bg-slate-800 rounded-xl p-5 text-slate-700 dark:text-slate-300">
-                        The Untethered is a community where men gather for genuine connection, honest dialogue,
-                        and the pursuit of growth that elevates both the individual and the group as a whole.
+                    {/* Purpose */}
+                    <div className="card bg-base-100 shadow-md rounded-xl">
+                        <div className="card-body p-6 md:p-8">
+                            <h2 className="card-title text-xl font-semibold text-gray-800 mb-4">
+                                Purpose
+                            </h2>
+                            <p className="text-gray-700 leading-relaxed">
+                                The Untethered is a community where men gather for genuine connection, honest dialogue,
+                                and the pursuit of growth that elevates both the individual and the group as a whole.
+                            </p>
+                        </div>
                     </div>
-                </section>
 
-                {/* Values */}
-                <section>
-                    <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">
-                        Values
-                    </h2>
-                    <div className="flex flex-col gap-4">
-                        {values.map((v) => (
-                            <div
-                                key={v.title}
-                                className="flex items-start gap-4 bg-white dark:bg-slate-800 rounded-lg p-4 shadow-sm"
-                            >
-                                <div className="text-3xl pt-1">{v.icon}</div>
-                                <div>
-                                    <div className="font-semibold text-slate-800 dark:text-slate-200 mb-1">
-                                        {v.title}
+                    {/* Values */}
+                    <div className="card bg-base-100 shadow-md rounded-xl">
+                        <div className="card-body p-6 md:p-8">
+                            <h2 className="card-title text-xl font-semibold text-gray-800 mb-6">
+                                Values
+                            </h2>
+                            <div className="grid gap-4 md:grid-cols-2">
+                                {values.map((v) => (
+                                    <div
+                                        key={v.title}
+                                        className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl"
+                                    >
+                                        <div className="text-2xl pt-1">{v.icon}</div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-800 mb-1">
+                                                {v.title}
+                                            </h3>
+                                            <p className="text-gray-600 text-sm leading-relaxed">
+                                                {v.text}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="text-slate-700 dark:text-slate-300 text-sm">
-                                        {v.text}
-                                    </div>
-                                </div>
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </section>
+                </div>
             </div>
         </div>
     )

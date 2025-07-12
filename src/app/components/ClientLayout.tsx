@@ -19,7 +19,9 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     return (
         <>
             <Header />
-            {children}
+            <main className="pt-16 min-h-screen">
+                {children}
+            </main>
         </>
     );
 } 
