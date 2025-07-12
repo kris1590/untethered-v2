@@ -21,7 +21,7 @@ const storage = getStorage(app);
 export { auth, app, storage };
 
 // lib/firestore-goals.js
-import { collection, doc, getDoc, setDoc, updateDoc, getDocs, arrayUnion, getFirestore } from 'firebase/firestore';
+import { collection, doc, getDoc, setDoc, updateDoc, getDocs, getFirestore } from 'firebase/firestore';
 const db = getFirestore(app);
 export { db };
 // Get all users (if storing users in Firestore 'users' collection)
@@ -107,8 +107,8 @@ export async function addWeeklyGoal(uid: string, weekIdx: number, goal: string, 
   const docId = `${uid}_${monthKey.replace('/', '_')}`;
   const ref = doc(db, "goals", docId);
   const snap = await getDoc(ref);
-  let data = snap.exists() ? snap.data() : {};
-  let weeks = data.weeklyGoals || [{ goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }];
+  const data = snap.exists() ? snap.data() : {};
+  const weeks = data.weeklyGoals || [{ goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }];
   // Make sure array is always length 4
   while (weeks.length < 4) weeks.push({ goal: "", note: "" });
   weeks[weekIdx] = { ...weeks[weekIdx], goal }; // Preserve note if exists
@@ -121,8 +121,8 @@ export async function updateWeeklyNote(uid: string, weekIdx: number, note: strin
   const docId = `${uid}_${monthKey.replace('/', '_')}`;
   const ref = doc(db, "goals", docId);
   const snap = await getDoc(ref);
-  let data = snap.exists() ? snap.data() : {};
-  let weeks = data.weeklyGoals || [{ goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }];
+  const data = snap.exists() ? snap.data() : {};
+  const weeks = data.weeklyGoals || [{ goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }, { goal: "", note: "" }];
   // Make sure array is always length 4
   while (weeks.length < 4) weeks.push({ goal: "", note: "" });
   weeks[weekIdx] = { ...weeks[weekIdx], note }; // Preserve goal if exists

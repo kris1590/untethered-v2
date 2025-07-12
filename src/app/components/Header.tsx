@@ -6,6 +6,7 @@ import { useToast } from '../../lib/toast-context';
 import LoginModal from './auth/LoginModal';
 import SignUpModal from './auth/SignUpModal';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const navLinks = [
     { href: '/team-culture', label: 'Team Culture' },
@@ -28,7 +29,7 @@ export default function Header() {
             await logout();
             addToast('success', 'Successfully logged out!');
             router.push('/');
-        } catch (error) {
+        } catch {
             addToast('error', 'Failed to logout. Please try again.');
         }
     };
@@ -39,10 +40,10 @@ export default function Header() {
                 <div className="navbar w-full px-6">
                     {/* Branding */}
                     <div className="navbar-start">
-                        <a href="/" className="text-2xl font-semibold text-foreground flex items-center gap-2">
+                        <Link href="/" className="text-2xl font-semibold text-foreground flex items-center gap-2">
                             <span role="img" aria-label="logo" className="text-2xl">🌱</span>
                             <span>Untethered</span>
-                        </a>
+                        </Link>
                     </div>
 
                     {/* Desktop Navigation */}
@@ -69,13 +70,13 @@ export default function Header() {
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setIsSignUpOpen(true)}
-                                    className="btn btn-primary btn-sm rounded-lg focus:outline-none"
+                                    className="btn btn-primary btn-sm rounded-lg focus:outline-none border-1"
                                 >
                                     Sign up
                                 </button>
                                 <button
                                     onClick={() => setIsLoginOpen(true)}
-                                    className="btn btn-outline btn-sm rounded-lg focus:outline-none"
+                                    className="btn btn-outline btn-sm rounded-lg focus:outline-none border-1"
                                 >
                                     Login
                                 </button>

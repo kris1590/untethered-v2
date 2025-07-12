@@ -45,14 +45,14 @@ export default function ResourcePage() {
                     list.push({ id: doc.id, ...doc.data() } as Resource)
                 );
                 setResources(list);
-            } catch (error) {
+            } catch {
                 addToast('error', 'Failed to load resources. Please refresh the page.');
             } finally {
                 setFetching(false);
             }
         };
         fetchResources();
-    }, []);
+    }, [addToast]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -94,7 +94,7 @@ export default function ResourcePage() {
             setSelectedFile(null);
             setFileError('');
             addToast('success', 'Resource added successfully!');
-        } catch (err) {
+        } catch {
             addToast('error', 'Failed to upload resource. Please try again.');
         } finally {
             setLoading(false);
@@ -154,14 +154,14 @@ export default function ResourcePage() {
                 try {
                     const fileRef = ref(storage, resource.fileUrl);
                     await deleteObject(fileRef);
-                } catch (error) {
+                } catch {
                     // File deletion failed, but we still want to delete the resource record
                     // This is a non-critical error, so we don't show a toast
                 }
             }
             setResources(resources.filter(r => r.id !== resource.id));
             addToast('success', 'Resource deleted successfully!');
-        } catch (error) {
+        } catch {
             addToast('error', 'Failed to delete resource.');
         } finally {
             setDeletingResource(null);

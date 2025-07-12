@@ -77,8 +77,9 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
             setEmail('');
             setPassword('');
             setRememberMe(false);
-        } catch (error: any) {
-            const userFriendlyMessage = getFirebaseErrorMessage(error.code);
+        } catch (error: unknown) {
+            const errorCode = error instanceof Error ? error.message : 'unknown_error';
+            const userFriendlyMessage = getFirebaseErrorMessage(errorCode);
             addToast('error', userFriendlyMessage);
         } finally {
             setLoading(false);
@@ -147,7 +148,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
                         <label className="label cursor-pointer justify-start gap-3">
                             <input
                                 type="checkbox"
-                                className="checkbox checkbox-sm checkbox-primary border-2 border-gray-400 focus:outline-none"
+                                className="checkbox checkbox-sm checkbox-primary border-1 border-gray-400 focus:outline-none"
                                 checked={rememberMe}
                                 onChange={(e) => handleRememberMeChange(e.target.checked)}
                             />
@@ -174,7 +175,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
                 <div className="modal-action">
                     <div className="text-center w-full">
                         <p className="text-sm text-neutral">
-                            Don't have an account?{' '}
+                            Don&apos;t have an account?{' '}
                             <button
                                 onClick={onSwitchToSignUp}
                                 className="link link-primary font-medium focus:outline-none"

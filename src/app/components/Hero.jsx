@@ -34,7 +34,7 @@ export function Hero() {
             Empower Your Team,<br />
             <span className="text-blue-400">Elevate Your Brotherhood</span>
           </h1>
-          <p className="mb-5 max-w-xl">
+          <p className="mb-5 max-w-xl text-base leading-relaxed">
             Welcome to Untethered, a place where connection meets growth.
             Join a community built on trust, honesty, and purpose—where every
             member helps shape the culture.
@@ -43,13 +43,13 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => setIsSignUpOpen(true)}
-                className="btn btn-primary"
+                className="btn btn-primary border-1"
               >
                 Get Started
               </button>
               <button
                 onClick={() => setIsLoginOpen(true)}
-                className="btn btn-outline"
+                className="btn btn-outline border-1"
               >
                 Sign In
               </button>

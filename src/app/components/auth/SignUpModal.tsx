@@ -80,8 +80,9 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
             setConfirmPassword('');
             setDisplayName('');
             setPhoneNumber('');
-        } catch (error: any) {
-            const userFriendlyMessage = getFirebaseErrorMessage(error.code);
+        } catch (error: unknown) {
+            const errorCode = error instanceof Error ? error.message : 'unknown_error';
+            const userFriendlyMessage = getFirebaseErrorMessage(errorCode);
             addToast('error', userFriendlyMessage);
         } finally {
             setLoading(false);

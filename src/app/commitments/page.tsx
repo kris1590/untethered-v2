@@ -7,8 +7,8 @@ const commitments = [
         title: 'Attend Regularly',
         subtitle: 'Be here. That is the work.',
         details: [
-            <span key="ceiling"><strong>Ceiling:</strong> Aim to attend every live weekly call unless genuinely prevented otherwise. Your presence is your biggest investment and the group\'s greatest gift.</span>,
-            <span key="floor"><strong>Floor:</strong> You must attend at least 2 out of 4 calls each month to remain an active member (50%). If that\'s not sustainable, you\'ll be asked to step away until you have the bandwidth. Our intimacy and trust depend on a reliable presence.</span>,
+            <span key="ceiling"><strong>Ceiling:</strong> Aim to attend every live weekly call unless genuinely prevented otherwise. Your presence is your biggest investment and the group&apos;s greatest gift.</span>,
+            <span key="floor"><strong>Floor:</strong> You must attend at least 2 out of 4 calls each month to remain an active member (50%). If that&apos;s not sustainable, you&apos;ll be asked to step away until you have the bandwidth. Our intimacy and trust depend on a reliable presence.</span>,
             <span key="miss">If you will miss a call, let us know in advance and stay plugged in. Drop an update or share reflections in the WhatsApp chat so the connection stays alive.</span>
         ],
         color: "bg-[#635BFF]"

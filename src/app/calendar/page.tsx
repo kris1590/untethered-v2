@@ -1,7 +1,7 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
-import { DateSelectArg, EventClickArg, EventApi } from '@fullcalendar/core';
+import { DateSelectArg, EventClickArg, EventContentArg } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -222,7 +222,7 @@ export default function FullCalendarPage() {
             setOption(null);
             setTopic('');
             addToast('success', 'Event booked successfully!');
-        } catch (error) {
+        } catch {
             addToast('error', 'Failed to book event. Please try again.');
         } finally {
             setLoading(false);
@@ -261,7 +261,7 @@ export default function FullCalendarPage() {
             setEventDetailModal(false);
             setSelectedEvent(null);
             addToast('success', 'Event deleted successfully!');
-        } catch (error) {
+        } catch {
             addToast('error', 'Failed to delete event. Please try again.');
         }
     };
@@ -280,7 +280,7 @@ export default function FullCalendarPage() {
     };
 
     // Render event content with optimized design
-    function renderEventContent(eventInfo: any) {
+    function renderEventContent(eventInfo: EventContentArg) {
         const isBreathwork = eventInfo.event.extendedProps.type === 'breathwork';
         const title = eventInfo.event.title;
         const shortTitle = title.length > 15 ? title.substring(0, 12) + '...' : title;

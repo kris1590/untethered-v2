@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     } else {
                         setUserData(null);
                     }
-                } catch (error) {
+                } catch {
                     addToast('error', 'Failed to load user profile. Please refresh the page.');
                     setUserData(null);
                 }
@@ -52,12 +52,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         return () => unsubscribe();
-    }, []);
+    }, [addToast]);
 
     const logout = async () => {
         try {
             await signOut(auth);
-        } catch (error) {
+        } catch {
             addToast('error', 'Failed to sign out. Please try again.');
         }
     };

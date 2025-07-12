@@ -52,7 +52,7 @@ function getPreviousMonth(monthYear: string): string {
 }
 
 export default function GoalsTracker() {
-    const { user, userData } = useAuth();
+    const { user } = useAuth();
     const { addToast } = useToast();
     const [users, setUsers] = useState<User[]>([]);
     const [selectedUid, setSelectedUid] = useState(user?.uid || "");
@@ -110,7 +110,7 @@ export default function GoalsTracker() {
             ];
             setWeeklyGoalInputs([0, 1, 2, 3].map(i => weeks[i]?.goal || ""));
             setWeeklyNoteInputs([0, 1, 2, 3].map(i => weeks[i]?.note || ""));
-        }).catch(error => {
+        }).catch(() => {
             addToast('error', 'Failed to load goals. Please refresh the page.');
             setLoading(false);
             // Set default empty structure on error
@@ -124,7 +124,7 @@ export default function GoalsTracker() {
                 ]
             });
         });
-    }, [selectedUid, selectedMonthYear]);
+    }, [selectedUid, selectedMonthYear, addToast]);
 
     // Update current month/year when it changes
     useEffect(() => {
@@ -159,7 +159,7 @@ export default function GoalsTracker() {
                 monthlyGoal: monthlyGoal
             }));
             addToast('success', 'Monthly goal set successfully!');
-        } catch (error) {
+        } catch {
             addToast('error', 'Failed to set monthly goal. Please try again.');
         } finally {
             setAddingMonthly(false);
@@ -183,7 +183,7 @@ export default function GoalsTracker() {
                 setUserGoals(goals);
             });
             addToast('success', 'Weekly progress saved successfully!');
-        } catch (error) {
+        } catch {
             addToast('error', 'Failed to save weekly progress. Please try again.');
         } finally {
             setSavingWeek(null);
