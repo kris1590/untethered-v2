@@ -12,6 +12,26 @@ interface SignUpModalProps {
     onSwitchToLogin: () => void;
 }
 
+// Helper function to convert Firebase error codes to user-friendly messages for signup
+const getFirebaseErrorMessage = (errorCode: string): string => {
+    switch (errorCode) {
+        case 'auth/email-already-in-use':
+            return 'An account with this email already exists. Please try logging in instead.';
+        case 'auth/invalid-email':
+            return 'Please enter a valid email address.';
+        case 'auth/weak-password':
+            return 'Password is too weak. Please choose a stronger password.';
+        case 'auth/operation-not-allowed':
+            return 'Email/password accounts are not enabled. Please contact support.';
+        case 'auth/network-request-failed':
+            return 'Network error. Please check your connection and try again.';
+        case 'auth/too-many-requests':
+            return 'Too many failed attempts. Please try again later.';
+        default:
+            return 'Failed to create account. Please try again.';
+    }
+};
+
 export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUpModalProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -61,7 +81,8 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }: SignUp
             setDisplayName('');
             setPhoneNumber('');
         } catch (error: any) {
-            addToast('error', error.message);
+            const userFriendlyMessage = getFirebaseErrorMessage(error.code);
+            addToast('error', userFriendlyMessage);
         } finally {
             setLoading(false);
         }

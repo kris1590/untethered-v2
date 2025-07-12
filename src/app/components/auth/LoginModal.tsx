@@ -11,6 +11,26 @@ interface LoginModalProps {
     onSwitchToSignUp: () => void;
 }
 
+// Helper function to convert Firebase error codes to user-friendly messages
+const getFirebaseErrorMessage = (errorCode: string): string => {
+    switch (errorCode) {
+        case 'auth/user-not-found':
+            return 'No account found with this email address.';
+        case 'auth/wrong-password':
+            return 'Incorrect password. Please try again.';
+        case 'auth/invalid-email':
+            return 'Please enter a valid email address.';
+        case 'auth/user-disabled':
+            return 'This account has been disabled. Please contact support.';
+        case 'auth/too-many-requests':
+            return 'Too many failed attempts. Please try again later.';
+        case 'auth/network-request-failed':
+            return 'Network error. Please check your connection and try again.';
+        default:
+            return 'Login failed. Please check your credentials and try again.';
+    }
+};
+
 export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginModalProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -58,7 +78,8 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }: LoginM
             setPassword('');
             setRememberMe(false);
         } catch (error: any) {
-            addToast('error', error.message);
+            const userFriendlyMessage = getFirebaseErrorMessage(error.code);
+            addToast('error', userFriendlyMessage);
         } finally {
             setLoading(false);
         }

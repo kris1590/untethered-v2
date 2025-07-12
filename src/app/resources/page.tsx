@@ -46,7 +46,7 @@ export default function ResourcePage() {
                 );
                 setResources(list);
             } catch (error) {
-                console.error('Error fetching resources:', error);
+                addToast('error', 'Failed to load resources. Please refresh the page.');
             } finally {
                 setFetching(false);
             }
@@ -62,7 +62,7 @@ export default function ResourcePage() {
         }
 
         const uploadedBy = userData?.displayName || user?.displayName || 'Anonymous';
-        console.log('Creating resource with uploadedBy:', uploadedBy);
+
         setLoading(true);
         try {
             let fileUrl = '';
@@ -143,7 +143,6 @@ export default function ResourcePage() {
     const handleDeleteResource = async (resource: Resource) => {
         if (!resource.id || !user) return;
         const currentUser = userData?.displayName || user?.displayName || 'Anonymous';
-        console.log('Delete check - Resource uploaded by:', resource.uploadedBy, 'Current user:', currentUser);
         if (resource.uploadedBy !== currentUser) {
             addToast('error', 'You can only delete resources you uploaded.');
             return;
@@ -155,7 +154,10 @@ export default function ResourcePage() {
                 try {
                     const fileRef = ref(storage, resource.fileUrl);
                     await deleteObject(fileRef);
-                } catch (error) { }
+                } catch (error) {
+                    // File deletion failed, but we still want to delete the resource record
+                    // This is a non-critical error, so we don't show a toast
+                }
             }
             setResources(resources.filter(r => r.id !== resource.id));
             addToast('success', 'Resource deleted successfully!');
@@ -185,12 +187,7 @@ export default function ResourcePage() {
                         <p className="text-lg text-neutral max-w-2xl mx-auto">
                             Share and discover valuable resources: articles, videos, PDFs and more.
                         </p>
-                        {/* Debug info */}
-                        <div className="mt-4 p-2 bg-base-200 rounded text-xs">
-                            <p>Current user: {userData?.displayName || user?.displayName || 'Anonymous'}</p>
-                            <p>User displayName: {user?.displayName}</p>
-                            <p>UserData displayName: {userData?.displayName}</p>
-                        </div>
+
                     </div>
                     {/* Upload Form */}
                     <div className="card bg-base-100 shadow-md rounded-xl mb-6">

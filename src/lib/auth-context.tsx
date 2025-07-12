@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from './firebase';
+import { useToast } from './toast-context';
 
 interface UserData {
     displayName?: string;
@@ -24,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [loading, setLoading] = useState(true);
+    const { addToast } = useToast();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -39,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         setUserData(null);
                     }
                 } catch (error) {
-                    console.error('Error fetching user data:', error);
+                    addToast('error', 'Failed to load user profile. Please refresh the page.');
                     setUserData(null);
                 }
             } else {
@@ -56,7 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             await signOut(auth);
         } catch (error) {
-            console.error('Error signing out:', error);
+            addToast('error', 'Failed to sign out. Please try again.');
         }
     };
 

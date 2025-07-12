@@ -111,7 +111,7 @@ export default function GoalsTracker() {
             setWeeklyGoalInputs([0, 1, 2, 3].map(i => weeks[i]?.goal || ""));
             setWeeklyNoteInputs([0, 1, 2, 3].map(i => weeks[i]?.note || ""));
         }).catch(error => {
-            console.error('Error fetching goals:', error);
+            addToast('error', 'Failed to load goals. Please refresh the page.');
             setLoading(false);
             // Set default empty structure on error
             setUserGoals({

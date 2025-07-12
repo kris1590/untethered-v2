@@ -55,7 +55,9 @@ const calendarStyles = `
   .fc-button-active {
     background-color: hsl(var(--pf)) !important;
     border-color: hsl(var(--pf)) !important;
-    color: white !important;
+    color: black !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
   }
   .fc-daygrid-day-number {
     color: black !important;
@@ -245,7 +247,6 @@ export default function FullCalendarPage() {
             setSelectedEvent(null);
             addToast('success', 'Event deleted successfully!');
         } catch (error) {
-            console.error('Error deleting event:', error);
             addToast('error', 'Failed to delete event. Please try again.');
         }
     };
